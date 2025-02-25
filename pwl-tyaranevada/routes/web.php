@@ -1,6 +1,12 @@
 <?php
-use App\Http\Controllers\WelcomeController;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\PhotoController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -12,8 +18,35 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/greeting', [WelcomeController::class, 
+'greeting']); 
 
-Route::get('/hello', [WelcomeController::class,'hello']);
+// Route::get('/greeting', function () { 
+//     return view('blog.hello', ['name' => 'Neva']); 
+//     }); 
+
+// Route::get('/greeting', function () { 
+//     return view('hello', ['name' => 'Neva']); 
+//     }); 
+
+Route::resource('photos', PhotoController::class)->only([ 
+    'index', 'show' 
+    ]); 
+    Route::resource('photos', PhotoController::class)->except([ 
+    'create', 'store', 'update', 'destroy' 
+    ]);
+
+
+Route::resource('photos', PhotoController::class);
+Route::get('/article/{id}', [ArticleController::class,'article']);
+Route::get('/about', [AboutController::class,'about']);
+Route::get('/home', [HomeController::class,'index']);
+
+
+// Route::get('/articles/{id}', [PageController::class,'articles']);
+// Route::get('/about', [PageController::class,'about']);
+// Route::get('/', [PageController::class,'index']);
+// Route::get('/hello', [WelcomeController::class,'hello']);
 
 // Route::get('/user/{name?}', function ($name='John') { 
 //     return 'Nama saya '.$name; 
