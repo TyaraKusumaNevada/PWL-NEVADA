@@ -78,14 +78,14 @@ Route::get('/home', [HomeController::class,'index']);
 //     return 'NIM: 2341720019 & Nama: Tyara Kusuma Nevada';
 // });
 
-
+//(basic routing)
 // Route::get('/world', function () { 
 //  return 'World'; 
 // }); 
 
-
+//(basic routing)
 // Route::get('/hello', function () {    
-//     return 'Hello World'; }); 
+//     return 'Hello World'; });        
 
 
 // Route::get('/', function () {
