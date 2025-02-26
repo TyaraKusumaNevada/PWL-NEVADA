@@ -9,4 +9,4 @@ class AboutController extends Controller
     public function about() { 
         return 'Tyara Kusuma Nevada - 2341720019'; 
     } 
-}
+} 

@@ -17,8 +17,9 @@ use App\Http\Controllers\PenjualanController;
 |
 */
 Route::get('/user/{id}/name/{name}', [UserController::class, 'user']); // Halaman User
-Route::get('/penjualan', [PenjualanController::class, 'penjualan']); // Halaman Penjualan
-Route::get('/', [HomeController::class,'index']); // Halaman Home
+Route::get('/penjualan', [PenjualanController::class, 'penjualan']);
+
+Route::get('/', [HomeController::class,'home'])->name('home'); // Halaman Home
 
 // Halaman Products
 Route::prefix('category')->group(function() {
