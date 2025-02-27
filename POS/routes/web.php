@@ -29,3 +29,6 @@ Route::prefix('category')->group(function() {
     Route::get('/baby-kid', [ProductsController::class, 'babyKid']);
 });
 
+Route::get('/products', function () {
+    return view('products');
+});

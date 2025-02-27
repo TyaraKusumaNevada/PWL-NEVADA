@@ -9,6 +9,6 @@
     <h1>Beauty & Health</h1>
     <h2 style="font-weight: normal;">Produk Kecantikan, Perawatan Kulit, Suplemen kesehatan</h2>
     <p>Halaman kategori Beauty & Health.</p>
-    <a href="{{ route('home') }}">Kembali ke daftar produk</a>
+    <a href="/products">Kembali ke daftar produk</a>
 </body>
 </html>

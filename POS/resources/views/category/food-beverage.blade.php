@@ -9,6 +9,6 @@
     <h1>Food & Beverage</h1>
     <h2 style="font-weight: normal;">Makanan, Perlengkapan Dapur, Minuman</h2>
     <p>Halaman kategori Food & Beverage.</p>
-    <a href="{{ route('home') }}">Kembali ke daftar produk</a>
+    <a href="/products">Kembali ke daftar produk</a>
 </body>
 </html>

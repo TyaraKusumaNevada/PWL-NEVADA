@@ -7,9 +7,8 @@
     <title>Home Care</title>
 </head>
 <body>
-    <h1>Home Care</h1>
     <h2 style="font-weight: normal;">Peralatan Kebersihan, Perabotan, Peralatan tukang</h2>
     <p>Halaman kategori Home Care.</p>
-    <a href="{{ route('home') }}">Kembali ke daftar produk</a>
+    <a href="/products">Kembali ke daftar produk</a>
 </body>
 </html>

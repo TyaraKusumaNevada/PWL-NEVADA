@@ -9,6 +9,6 @@
     <h1>Baby & Kid</h1>
     <h2 style="font-weight: normal;">Produk Bayi, Mainan, Pakaian Anak</h2>
     <p>Halaman kategori Baby & Kid.</p>
-    <a href="{{ route('home') }}">Kembali ke daftar produk</a>
+    <a href="/products">Kembali ke daftar produk</a>
 </body>
 </html>
