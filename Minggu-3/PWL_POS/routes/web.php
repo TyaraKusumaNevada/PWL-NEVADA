@@ -2,11 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WelcomeController;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\PhotoController; 
+use App\Http\Controllers\LevelController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,78 +15,12 @@ use App\Http\Controllers\PhotoController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/greeting', [WelcomeController::class, 
-'greeting']); 
-
-// Route::get('/greeting', function () { 
-//     return view('blog.hello', ['name' => 'Neva']); 
-//     }); 
-
-// Route::get('/greeting', function () { 
-//     return view('hello', ['name' => 'Neva']); 
-//     }); 
-
-Route::resource('photos', PhotoController::class)->only([ 
-    'index', 'show' 
-    ]); 
-    Route::resource('photos', PhotoController::class)->except([ 
-    'create', 'store', 'update', 'destroy' 
-    ]);
 
 
-Route::resource('photos', PhotoController::class);
-Route::get('/article/{id}', [ArticleController::class,'article']);
-Route::get('/about', [AboutController::class,'about']);
-Route::get('/home', [HomeController::class,'index']);
+Route::get('/', function () {
+    return view('welcome');
+});
 
-
-// Route::get('/articles/{id}', [PageController::class,'articles']);
-// Route::get('/about', [PageController::class,'about']);
-// Route::get('/', [PageController::class,'index']);
-// Route::get('/hello', [WelcomeController::class,'hello']);
-
-// Route::get('/user/{name?}', function ($name='John') { 
-//     return 'Nama saya '.$name; 
-// }); 
-
-
-//  Route::get('/user/{name}', function ($name) { 
-//    return 'Nama saya '.$name; 
-//  }); 
-
-
-// Route::get('/articles/{id}', function ($id) { 
-//     return 'Halaman Artikel dengan ID ' . $id; 
-// });
-
-
-// Route::get('/posts/{post}/comments/{comment}', function 
-// ($postId, $commentId) { 
-// return 'Pos ke-'.$postId." Komentar ke-: ".$commentId; 
-// }); 
-
-
-// Route::get('/', function () {
-//     return 'Selamat Datang';
-// });
-
-
-// Route::get('/about', function () {
-//     return 'NIM: 2341720019 & Nama: Tyara Kusuma Nevada';
-// });
-
-//(basic routing)
-// Route::get('/world', function () { 
-//  return 'World'; 
-// }); 
-
-//(basic routing)
-// Route::get('/hello', function () {    
-//     return 'Hello World'; });        
-
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/level', [LevelController::class, 'index']);
 
 
