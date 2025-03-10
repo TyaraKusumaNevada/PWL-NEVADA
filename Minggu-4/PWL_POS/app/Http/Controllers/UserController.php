@@ -67,19 +67,50 @@ class UserController extends Controller
 
  
     //---------------PRAKTIKUM 1 LANGKAH 2-------------
-    public function index(){
+    // public function index(){
 
-        $data = [
-            'level_id' => 2,
-            'username' => 'manager_tiga',
-            'nama' => 'Manager 3',
-            'password' => Hash::make('12345')
-        ];
+    //     $data = [
+    //         'level_id' => 2,
+    //         'username' => 'manager_tiga',
+    //         'nama' => 'Manager 3',
+    //         'password' => Hash::make('12345')
+    //     ];
         
-        UserModel::create($data);
+    //     UserModel::create($data);
         
-        $user = UserModel::all();
-        return view('user', ['data' => $user]);
-    }
+    //     $user = UserModel::all();
+    //     return view('user', ['data' => $user]);
+    // }
     
+
+    public function index() {
+    //--------------PRAKTIKUM 2.1 LANGKAH 1------------
+
+    // $user = UserModel::find(1);
+    // return view('user', ['data' => $user]);
+
+    //-------------PRAKTIKUM 2.1 LANGKAH 4-------------
+
+    // $user = UserModel::where('level_id', 1)->first();
+    // return view('user', ['data' => $user]);
+    
+    //------------PRAKTIKUM 2.1 LANGKAH 6--------------
+
+    // $user = UserModel::firstWhere('level_id', 1);
+    // return view('user', ['data' => $user]);
+
+    //------------PRAKTIKUM 2.1 LANGKAH 8--------------
+    // $user = UserModel::findOr(1, ['username', 'nama'], function () {
+    //     abort(404);
+    // });
+    // return view('user', ['data' => $user]);
+    
+    //------------PRAKTIKUM 2.1 LANGKAH 10-------------- 
+    $user = UserModel::findOr(20, ['username', 'nama'], function () {
+        abort(404);
+    });
+    
+    return view('user', ['data' => $user]);
+    
+    }
 }
