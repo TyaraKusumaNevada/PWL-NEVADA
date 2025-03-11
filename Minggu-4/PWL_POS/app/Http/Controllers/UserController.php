@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // public function index()
-    // {
+    public function index()
+    {
     //     // coba akses model UserModel
     //     $user = UserModel::all(); // ambil semua data dari tabel m_user
     //     return view('user', ['data' => $user]);
@@ -83,7 +83,6 @@ class UserController extends Controller
     // }
     
 
-    public function index() {
     //--------------PRAKTIKUM 2.1 LANGKAH 1------------
 
     // $user = UserModel::find(1);
@@ -127,8 +126,57 @@ class UserController extends Controller
     // dd($user);
     // return view('user', ['data' => $user]);
     
-    //------------PRAKTIKUM 2.3 LANGKAH 3 --------------
-    $user = UserModel::where('level_id', 2)->count();
+    // //------------PRAKTIKUM 2.3 LANGKAH 3 --------------
+    // $user = UserModel::where('level_id', 2)->count();
+    // return view('user', ['data' => $user]);
+
+    // //------------PRAKTIKUM 2.4 LANGKAH 1 --------------
+
+    // $user = UserModel::firstOrCreate(
+    //     [
+    //         'username' => 'manager',
+    //         'nama' => 'Manager',
+    //     ]
+    // );
+    // return view('user', ['data' => $user]);
+
+    // //------------PRAKTIKUM 2.4 LANGKAH 4 --------------
+
+    // $user = UserModel::firstOrCreate(
+    //     [
+    //         'username' => 'manager22',
+    //         'nama' => 'Manager Dua Dua',
+    //         'password' => Hash::make('12345'),
+    //         'level_id' => 2
+    //     ]
+    // );
+    
+    // return view('user', ['data' => $user]);
+
+    //------------PRAKTIKUM 2.4 LANGKAH 6 --------------
+    // $user = UserModel::firstOrNew(
+    //     [
+    //         'username' => 'manager',
+    //         'nama' => 'Manager',
+    //     ]
+    // );
+    
+    // return view('user', ['data' => $user]);
+
+    //------------PRAKTIKUM 2.4 LANGKAH 8 --------------
+    $user = UserModel::firstOrNew(
+        [
+            'username' => 'manager33',
+            'nama' => 'Manager Tiga Tiga',
+            'password' => Hash::make('12345'),
+            'level_id' => 2
+        ]
+    );
+    $user->save();
     return view('user', ['data' => $user]);
+    
+    
+    
     }
+
 }
