@@ -27,4 +27,17 @@ Route::get('/', function () {
 
 Route::get('/user', [UserController::class, 'index']);
 
+//Praktikum 2.6 lankah 5
+Route::get('/user/tambah', [UserController::class, 'tambah']); 
 
+//Praktikum 2.6 langkah 8
+Route::post('/user/tambah_simpan', [UserController::class, 'tambah_simpan']); 
+
+//Praktikum 2.6 langkah 12
+Route::get('/user/ubah/{id}', [UserController::class, 'ubah']); 
+
+//Praktikum 2.6 langkah 15
+Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan']); 
+
+//Praktikum 2.6 langkah 18
+Route::get('/user/hapus/{id}', [UserController::class, 'hapus']); 
