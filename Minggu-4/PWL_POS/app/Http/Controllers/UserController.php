@@ -224,10 +224,10 @@ class UserController extends Controller
 
     
     // ------------PRAKTIKUM 2.6 LANGKAH 1 --------------
-    public function index(){
-    $users = UserModel::all();
-    return view('user', ['data' => $users]);
-    }
+    // public function index(){
+    // $users = UserModel::all();
+    // return view('user', ['data' => $users]);
+    // }
 
     public function tambah(){
     return view('user_tambah');
@@ -278,5 +278,20 @@ class UserController extends Controller
     
         return redirect('/user');
     }
+
+    //------------PRAKTIKUM 2.7 LANGKAH 2-------------
+    // public function index()
+    // {
+    //     $user = UserModel::with('level')->get();
+    //     dd($user);
+    // }
+
+    public function index()
+    {
+        $user = UserModel::with('level')->get();
+        return view('user', ['data' => $user]);
+   
+    }
+   
 
 }
