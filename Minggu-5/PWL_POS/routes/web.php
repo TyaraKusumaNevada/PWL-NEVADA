@@ -46,3 +46,8 @@ Route::get('/user/hapus/{id}', [UserController::class, 'hapus']);
 //Praktikum 2 Jobsheet 5 langkah 12
 
 Route::get('/kategori', [KategoriController::class, 'index']);
+
+
+// Praktikum 3 Jobsheet 5 langkah 1
+Route::get('/kategori/create', [KategoriController::class, 'create']);
+Route::post('/kategori', [KategoriController::class, 'store']);
