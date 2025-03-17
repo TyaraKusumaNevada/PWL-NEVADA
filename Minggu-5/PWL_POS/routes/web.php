@@ -42,3 +42,7 @@ Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan']);
 
 //Praktikum 2.6 langkah 18
 Route::get('/user/hapus/{id}', [UserController::class, 'hapus']); 
+
+//Praktikum 2 Jobsheet 5 langkah 12
+
+Route::get('/kategori', [KategoriController::class, 'index']);
