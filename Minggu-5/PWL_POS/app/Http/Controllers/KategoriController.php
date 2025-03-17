@@ -28,6 +28,40 @@ class KategoriController extends Controller
         return redirect('/kategori');
     }
 
+    //Tugas 3 - Tambahkan Edit
+
+    // Method untuk menampilkan form edit
+    public function edit($id)
+    {
+        $kategori = KategoriModel::findOrFail($id);
+        return view('kategori.edit', compact('kategori'));
+    }
+
+    // Method untuk update data kategori
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'kodeKategori' => 'required|string|max:10|unique:m_kategori,kategori_kode,'.$id.',kategori_id',
+            'namaKategori' => 'required|string|max:255',
+        ]);
+
+        $kategori = KategoriModel::findOrFail($id);
+        $kategori->update([
+            'kategori_kode' => $request->kodeKategori,
+            'kategori_nama' => $request->namaKategori,
+        ]);
+
+        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diupdate');
+    }
+    
+
+
+    //Tugas 3 Tambahkan Delete
+    public function delete($id)
+    {
+        KategoriModel::where('kategori_id', $id)->delete();
+        return redirect(to: '/kategori');
+    }
     
     // public function index()
     // {

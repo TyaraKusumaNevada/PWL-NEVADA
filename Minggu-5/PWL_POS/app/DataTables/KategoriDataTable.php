@@ -20,12 +20,33 @@ class KategoriDataTable extends DataTable
      *
      * @param QueryBuilder $query Results from query() method.
      */
-    public function dataTable(QueryBuilder $query): EloquentDataTable
+
+    
+
+    public function dataTable($query)
     {
-        return (new EloquentDataTable($query))
-            /* ->addColumn('action', 'kategori.action') */
-            ->setRowId('id');
+        return datatables()
+            ->eloquent($query)
+            ->addColumn('action', function($row) {
+                $editUrl = route('kategori.edit', $row->kategori_id);
+                $deleteUrl = route('kategori.delete', $row->kategori_id);
+                return '
+                    <a href="'.$editUrl.'" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form action="'.$deleteUrl.'" method="POST" style="display:inline;" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus kategori ini?\')">
+                        '.csrf_field().'
+                        '.method_field('DELETE').'
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                ';
+            })
+            ->rawColumns(['action']);
+            
     }
+
 
     /**
      * Get the query source of dataTable.
@@ -63,16 +84,17 @@ class KategoriDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            /* Column::computed('action')
-                 ->exportable(false)
-                 ->printable(false)
-                 ->width(60)
-                 ->addClass('text-center'), */
+            
             Column::make('kategori_id'),
             Column::make('kategori_kode'),
             Column::make('kategori_nama'),
             Column::make('created_at'),
             Column::make('updated_at'),
+            Column::computed('action')
+                 ->exportable(false)
+                 ->printable(false)
+                 ->width(200)
+                 ->addClass('text-center'), 
         ];
     }
 
@@ -83,4 +105,7 @@ class KategoriDataTable extends DataTable
     {
         return 'Kategori_' . date('YmdHis');
     }
+
+    
+
 }

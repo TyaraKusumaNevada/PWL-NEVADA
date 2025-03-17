@@ -45,9 +45,17 @@ Route::get('/user/hapus/{id}', [UserController::class, 'hapus']);
 
 //Praktikum 2 Jobsheet 5 langkah 12
 
-Route::get('/kategori', [KategoriController::class, 'index']);
+Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
 
 // Praktikum 3 Jobsheet 5 langkah 1
 Route::get('/kategori/create', [KategoriController::class, 'create']);
 Route::post('/kategori', [KategoriController::class, 'store']);
+
+//Jobsheet 5 Tugas 
+Route::get('/kategori/create', [KategoriController::class, 'create'])->name('kategori.create');
+Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+Route::put('/kategori/{id}/update', [KategoriController::class, 'update'])->name('kategori.update');
+Route::delete('/kategori/{id}', [KategoriController::class, 'delete'])->name('kategori.delete');
+Route::resource('kategori', KategoriController::class);
