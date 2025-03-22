@@ -26,6 +26,11 @@ Route::get('/', function () {
 //Route::get('/level', [LevelController::class, 'index']);
 // Route::get('/kategori', [KategoriController::class, 'index']);
 
+// JOBSHEET 5 LANGKAH 5 PRAKTIKUM 2
+Route::get('/', [WelcomeController::class, 'index']);
+
+
+// JOBSHEET 4
 Route::get('/user', [UserController::class, 'index']);
 
 //Praktikum 2.6 lankah 5

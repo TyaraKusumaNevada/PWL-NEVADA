@@ -1,20 +1,18 @@
-<?php 
+<?php
+namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;  
+class WelcomeController extends Controller
+{
+    public function index()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Selamat Datang',
+            'list' => ['Home', 'Welcome']
+        ];
 
-use Illuminate\Http\Request;  
+        $activeMenu = 'dashboard';
 
-class WelcomeController extends Controller 
-{ 
-        public function hello(){
-                return('Hello World');
-        }
-        
-        public function greeting(){
-                return view('blog.hello')
-                    ->with('name', 'Neva')
-                    ->with('occupation', 'Astronaut');
-        }
+        return view('welcome', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu]);
+    }
 }
-        
 
