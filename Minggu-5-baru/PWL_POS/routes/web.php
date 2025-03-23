@@ -29,6 +29,7 @@ Route::get('/', function () {
 // JOBSHEET 5 LANGKAH 5 PRAKTIKUM 2
 Route::get('/', [WelcomeController::class, 'index']);
 
+//route usercontroller
 Route::group(['prefix' => 'user'], function () {
     Route::get('/', [UserController::class, 'index']); // menampilkan halaman awal user
     Route::post('/list', [UserController::class, 'list']); // menampilkan data user dalam bentuk json untuk datatables
@@ -38,6 +39,18 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('/{id}/edit', [UserController::class, 'edit']); // menampilkan halaman form edit user
     Route::put('/{id}', [UserController::class, 'update']); // menyimpan perubahan data user
     Route::delete('/{id}', [UserController::class, 'destroy']); // menghapus data user
+});
+
+//route levelcontroller
+Route::group(['prefix' => 'level'], function () {
+    Route::get('/', [LevelController::class, 'index']); // Menampilkan daftar level
+    Route::post('/list', [LevelController::class, 'list']); // Menampilkan data level dalam JSON untuk DataTables
+    Route::get('/create', [LevelController::class, 'create']); // Menampilkan halaman form tambah level
+    Route::post('/', [LevelController::class, 'store']); // Menyimpan data level baru
+    Route::get('/{id}', [LevelController::class, 'show']); // Menampilkan detail level
+    Route::get('/{id}/edit', [LevelController::class, 'edit']); // Menampilkan halaman form edit level
+    Route::put('/{id}', [LevelController::class, 'update']); // Menyimpan perubahan data level
+    Route::delete('/{id}', [LevelController::class, 'destroy']); // Menghapus data level
 });
 
 
