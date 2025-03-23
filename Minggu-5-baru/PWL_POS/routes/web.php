@@ -5,6 +5,8 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StokController;
+use App\Http\Controllers\BarangController;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /*
@@ -65,6 +67,29 @@ Route::group(['prefix' => 'kategori'], function () {
     Route::delete('/{id}', [KategoriController::class, 'destroy']);// menghapus data kategori
 });
 
+//route stok 
+Route::group(['prefix' => 'stok'], function () {
+    Route::get('/', [StokController::class, 'index']);// menampilkan halaman awal stok
+    Route::post('/list', [StokController::class, 'list']);  // menampilkan data stok dalam bentuk json untuk datatables
+    Route::get('/create', [StokController::class, 'create']); // menampilkan halaman form tambah stok
+    Route::post('/', [StokController::class, 'store']); // menyimpan data stok baru
+    Route::get('/{id}', [StokController::class, 'show']); // menampilkan detail stok
+    Route::get('/{id}/edit', [StokController::class, 'edit']); // menampilkan halaman form edit stok
+    Route::put('/{id}', [StokController::class, 'update']); // menyimpan perubahan data stok
+    Route::delete('/{id}', [StokController::class, 'destroy']); // menghapus data stok
+});
+
+//route barang 
+Route::group(['prefix' => 'barang'], function () {
+    Route::get('/', [BarangController::class, 'index']); // menampilkan halaman awal barang
+    Route::post('/list', [BarangController::class, 'list']); // menampilkan data barang dalam bentuk json untuk datatables
+    Route::get('/create', [BarangController::class, 'create']); // menampilkan halaman form tambah barang
+    Route::post('/', [BarangController::class, 'store']); // menyimpan data barang baru
+    Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail barang
+    Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
+    Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang
+    Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data barang
+});
 
 
 // JOBSHEET 4
