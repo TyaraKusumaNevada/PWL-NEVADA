@@ -3,29 +3,51 @@
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">{{ $page->title }}</h3>
+            <h3 class="card-title">Edit Stok</h3>
             <div class="card-tools"></div>
-        </div>
 
+
+
+
+
+
+        </div>
         <div class="card-body">
             @empty($stok)
                 <div class="alert alert-danger alert-dismissible">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
                     Data yang Anda cari tidak ditemukan.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </div>
                 <a href="{{ url('stok') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
             @else
                 <form method="POST" action="{{ url('/stok/' . $stok->stok_id) }}" class="form-horizontal">
                     @csrf
-                    @method('PUT')
+                    {!! method_field('PUT') !!} <!-- Gunakan method PUT untuk update data -->
 
+                    <!-- Pilih Barang -->
                     <div class="form-group row">
                         <label class="col-2 control-label col-form-label">Barang</label>
                         <div class="col-10">
                             <select class="form-control" id="barang_id" name="barang_id" required>
                                 <option value="">- Pilih Barang -</option>
-                                @foreach ($barang as $item)
-                                    <option value="{{ $item->barang_id }}" @if ($item->barang_id == $stok->barang_id) selected @endif>
+                                @foreach($barang as $item)
+                                    <option value="{{ $item->barang_id }}" @if($item->barang_id == $stok->barang_id) selected @endif>
                                         {{ $item->barang_nama }}
                                     </option>
                                 @endforeach
@@ -36,14 +58,15 @@
                         </div>
                     </div>
 
+                    <!-- Pilih Pengguna -->
                     <div class="form-group row">
-                        <label class="col-2 control-label col-form-label">User</label>
+                        <label class="col-2 control-label col-form-label">Pengguna</label>
                         <div class="col-10">
                             <select class="form-control" id="user_id" name="user_id" required>
-                                <option value="">- Pilih User -</option>
-                                @foreach ($user as $item)
-                                    <option value="{{ $item->user_id }}" @if ($item->user_id == $stok->user_id) selected @endif>
-                                        {{ $item->nama }} ({{ $item->username }})
+                                <option value="">- Pilih Pengguna -</option>
+                                @foreach($user as $item)
+                                    <option value="{{ $item->user_id }}" @if($item->user_id == $stok->user_id) selected @endif>
+                                        {{ $item->nama }}
                                     </option>
                                 @endforeach
                             </select>
@@ -52,7 +75,28 @@
                             @enderror
                         </div>
                     </div>
+                    {{-- modif --}}
+                    <!-- Pilih Supplier -->
+                    <div class="form-group row">
+                        <label class="col-2 control-label col-form-label">Supplier</label>
+                        <div class="col-10">
+                            <select class="form-control" id="supplier_id" name="supplier_id" required>
+                                <option value="">- Pilih Supplier -</option>
+                                @foreach($supplier as $item)
+                                    <option value="{{ $item->supplier_id }}" @if($stok->supplier_id == $item->supplier_id) selected
+                                    @endif>
+                                        {{ $item->supplier_nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('supplier_id')
+                                <small class="form-text text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
 
+
+                    <!-- Input Tanggal -->
                     <div class="form-group row">
                         <label class="col-2 control-label col-form-label">Tanggal</label>
                         <div class="col-10">
@@ -64,17 +108,19 @@
                         </div>
                     </div>
 
+                    <!-- Input Jumlah Stok -->
                     <div class="form-group row">
-                        <label class="col-2 control-label col-form-label">Jumlah</label>
+                        <label class="col-2 control-label col-form-label">Jumlah Stok</label>
                         <div class="col-10">
                             <input type="number" class="form-control" id="stok_jumlah" name="stok_jumlah"
-                                value="{{ old('stok_jumlah', $stok->stok_jumlah) }}" min="1" required>
+                                value="{{ old('stok_jumlah', $stok->stok_jumlah) }}" required min="1">
                             @error('stok_jumlah')
                                 <small class="form-text text-danger">{{ $message }}</small>
                             @enderror
                         </div>
                     </div>
 
+                    <!-- Tombol Simpan & Kembali -->
                     <div class="form-group row">
                         <label class="col-2 control-label col-form-label"></label>
                         <div class="col-10">
@@ -86,6 +132,7 @@
             @endempty
         </div>
     </div>
+
 @endsection
 
 @push('css')

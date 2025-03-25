@@ -7,6 +7,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /*
@@ -89,6 +90,18 @@ Route::group(['prefix' => 'barang'], function () {
     Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
     Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang
     Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data barang
+});
+
+//route supp
+Route::group(['prefix' => 'supplier'], function () {
+    Route::get('/', [SupplierController::class, 'index']); // Menampilkan halaman awal supplier
+    Route::post('/list', [SupplierController::class, 'list']); // Menampilkan data supplier dalam bentuk JSON untuk datatables
+    Route::get('/create', [SupplierController::class, 'create']);  // Menampilkan halaman form tambah supplier
+    Route::post('/', [SupplierController::class, 'store']); // Menyimpan data supplier baru
+    Route::get('/{id}', [SupplierController::class, 'show']); // Menampilkan detail supplier
+    Route::get('/{id}/edit', [SupplierController::class, 'edit']); // Menampilkan halaman form edit supplier
+    Route::put('/{id}', [SupplierController::class, 'update']);// Menyimpan perubahan data supplier
+    Route::delete('/{id}', [SupplierController::class, 'destroy']); // Menghapus data supplier
 });
 
 

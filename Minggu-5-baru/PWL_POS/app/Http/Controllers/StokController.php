@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\StokModel;
 use App\Models\BarangModel;
+use App\Models\SupplierModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class StokController extends Controller
 {
-    // Menampilkan halaman awal stok
     public function index()
     {
         $breadcrumb = (object) [
@@ -27,12 +27,13 @@ class StokController extends Controller
         $barang = BarangModel::all(); // untuk filter barang
 
         return view('stok.index', compact('breadcrumb', 'page', 'activeMenu', 'barang'));
+
+
     }
 
-    // Ambil data stok dalam bentuk json untuk datatables
     public function list(Request $request)
     {
-        $stok = StokModel::with(['barang', 'user']);
+        $stok = StokModel::with(['barang', 'user', 'supplier']);
 
         if ($request->barang_id) {
             $stok->where('barang_id', $request->barang_id);
@@ -41,20 +42,19 @@ class StokController extends Controller
         return DataTables::of($stok)
             ->addIndexColumn()
             ->addColumn('aksi', function ($s) {
-                $btn  = '<a href="' . url('/stok/' . $s->stok_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                $btn = '<a href="' . url('/stok/' . $s->stok_id) . '" class="btn btn-info btn-sm">Detail</a> ';
                 $btn .= '<a href="' . url('/stok/' . $s->stok_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/stok/' . $s->stok_id) . '">'
-                      . csrf_field()
-                      . method_field('DELETE')
-                      . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus data ini?\');">Hapus</button>'
-                      . '</form>';
+                    . csrf_field()
+                    . method_field('DELETE')
+                    . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus data ini?\');">Hapus</button>'
+                    . '</form>';
                 return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
 
-    // tampilan form tambah stok
     public function create()
     {
         $breadcrumb = (object) [
@@ -68,30 +68,38 @@ class StokController extends Controller
 
         $barang = BarangModel::all();
         $user = UserModel::all();
+        $supplier = SupplierModel::all(); // Tambahkan supplier
         $activeMenu = 'stok';
 
-        return view('stok.create', compact('breadcrumb', 'page', 'barang', 'user', 'activeMenu'));
+
+
+
+
+        return view('stok.create', compact('breadcrumb', 'page', 'barang', 'user', 'supplier', 'activeMenu'));
     }
 
-    // Save data stok baru
     public function store(Request $request)
     {
         $request->validate([
             'barang_id' => 'required|integer',
             'user_id' => 'required|integer',
+            'supplier_id' => 'required|integer',
             'stok_tanggal' => 'required|date',
             'stok_jumlah' => 'required|integer|min:1',
         ]);
 
         StokModel::create($request->all());
 
+
+
         return redirect('/stok')->with('success', 'Data stok berhasil disimpan');
     }
 
-    // tampilan detail stok
+
+
     public function show($id)
     {
-        $stok = StokModel::with(['barang', 'user'])->find($id);
+        $stok = StokModel::with(['barang', 'user', 'supplier'])->find($id);
 
         $breadcrumb = (object) [
             'title' => 'Detail Stok',
@@ -107,12 +115,15 @@ class StokController extends Controller
         return view('stok.show', compact('breadcrumb', 'page', 'stok', 'activeMenu'));
     }
 
-    // tampilan form edit stok
+
+
+
     public function edit($id)
     {
         $stok = StokModel::find($id);
         $barang = BarangModel::all();
         $user = UserModel::all();
+        $supplier = SupplierModel::all(); // Tambahkan supplier
 
         $breadcrumb = (object) [
             'title' => 'Edit Stok',
@@ -125,25 +136,28 @@ class StokController extends Controller
 
         $activeMenu = 'stok';
 
-        return view('stok.edit', compact('breadcrumb', 'page', 'stok', 'barang', 'user', 'activeMenu'));
+
+        return view('stok.edit', compact('breadcrumb', 'page', 'stok', 'barang', 'user', 'supplier', 'activeMenu'));
     }
 
-    // save edit
     public function update(Request $request, $id)
     {
         $request->validate([
             'barang_id' => 'required|integer',
             'user_id' => 'required|integer',
+            'supplier_id' => 'required|integer',
             'stok_tanggal' => 'required|date',
             'stok_jumlah' => 'required|integer|min:1',
         ]);
 
         StokModel::find($id)->update($request->all());
 
+
+
+
         return redirect('/stok')->with('success', 'Data stok berhasil diubah');
     }
 
-    // delete
     public function destroy($id)
     {
         $check = StokModel::find($id);
