@@ -43,7 +43,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('/{id}', [UserController::class, 'destroy']); // menghapus data user
 });
 
-//route levelcontroller
+//route level
 Route::group(['prefix' => 'level'], function () {
     Route::get('/', [LevelController::class, 'index']); // Menampilkan daftar level
     Route::post('/list', [LevelController::class, 'list']); // Menampilkan data level dalam JSON untuk DataTables
