@@ -13,8 +13,34 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function update_ajax(Request $request, $id)
-{
+    public function delete_ajax(Request $request, $id){
+    // cek apakah request dari ajax
+    if ($request->ajax() || $request->wantsJson()) {
+        $user = UserModel::find($id);
+        if ($user) {
+            $user->delete();
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } else {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data tidak ditemukan'
+            ]);
+        }
+    }
+    return redirect('/');
+    }
+
+    public function confirm_ajax(string $id){
+        $user = UserModel::find($id);
+    
+        return view('user.confirm_ajax', ['user' => $user]);
+    }
+    
+
+    public function update_ajax(Request $request, $id){
     // Cek apakah request berasal dari Ajax
     if ($request->ajax() || $request->wantsJson()) {
         $rules = [
@@ -57,12 +83,11 @@ class UserController extends Controller
     }
 
     return redirect('/');
-}
+    }      
 
     //js 6 prak 2
     // Menampilkan halaman form edit user ajax
-    public function edit_ajax(string $id)
-    {
+    public function edit_ajax(string $id){
         $user = UserModel::find($id);
         $level = LevelModel::select('level_id', 'level_nama')->get();
 
@@ -70,8 +95,7 @@ class UserController extends Controller
     }
    
     //js 6 prak 1
-    public function create_ajax()
-    {
+    public function create_ajax(){
         $level = LevelModel::select('level_id', 'level_nama')->get();
         return view('user.create_ajax', ['level' => $level]);
     }
