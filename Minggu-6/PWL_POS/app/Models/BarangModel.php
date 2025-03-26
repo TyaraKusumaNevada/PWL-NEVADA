@@ -1,37 +1,38 @@
 <?php
 
 namespace App\Models;
-use App\Models\StokModel;
-use App\Models\BarangModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\KategoriModel;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\KategoriModel;
 
 class BarangModel extends Model
 {
     use HasFactory;
 
+    // Nama tabel di database
     protected $table = 'm_barang';
+
+    // Primary key yang digunakan
     protected $primaryKey = 'barang_id';
 
+    // Kolom yang boleh diisi secara mass assignment
     protected $fillable = [
         'kategori_id',
         'barang_kode',
         'barang_nama',
         'harga_beli',
-        'harga_jual',
+        'harga_jual'
     ];
 
-    // Relasi ke modl Kategori
-    public function kategori()
+    /**
+     * Relasi ke model KategoriModel
+     * belongsTo => many barang to one kategori
+     */
+    public function kategori(): BelongsTo
     {
+        // 'kategori_id' di m_barang merujuk ke 'kategori_id' di m_kategori
         return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');
     }
-    // Relasi ke model Stok
-    public function stok()
-    {
-        return $this->hasMany(StokModel::class, 'barang_id', 'barang_id');
-    }
-
 }
