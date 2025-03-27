@@ -125,11 +125,21 @@ Route::group(['prefix' => 'supplier'], function () {
     Route::post('/list', [SupplierController::class, 'list']); // Menampilkan data supplier dalam bentuk JSON untuk datatables
     Route::get('/create', [SupplierController::class, 'create']);  // Menampilkan halaman form tambah supplier
     Route::post('/', [SupplierController::class, 'store']); // Menyimpan data supplier baru
+    // js 6 tugas
+    Route::get('/create_ajax', [SupplierController::class, 'create_ajax']);
+    Route::post('/ajax', [SupplierController::class, 'store_ajax']);
+    // js 6 tugas
+    Route::get('/{id}/edit_ajax', [SupplierController::class, 'edit_ajax']);
+    Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']);
+    // js 6 tugas
+    Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
+    Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
     Route::get('/{id}', [SupplierController::class, 'show']); // Menampilkan detail supplier
     Route::get('/{id}/edit', [SupplierController::class, 'edit']); // Menampilkan halaman form edit supplier
     Route::put('/{id}', [SupplierController::class, 'update']);// Menyimpan perubahan data supplier
     Route::delete('/{id}', [SupplierController::class, 'destroy']); // Menghapus data supplier
 });
+
 
 
 // JOBSHEET 4
