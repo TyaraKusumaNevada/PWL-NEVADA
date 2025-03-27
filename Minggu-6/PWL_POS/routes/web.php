@@ -122,6 +122,7 @@ Route::group(['prefix' => 'barang'], function () {
     //js 6 tugas
     Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
+    
     Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail barang
     Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
     Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang

@@ -56,7 +56,10 @@
           </tr>
         </table>
       </div>
-@@ -51,51 +63,52 @@
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
+        <button type="submit" class="btn btn-primary">Ya, Hapus</button>
+      </div>
     </div>
   </div>
 </form>
