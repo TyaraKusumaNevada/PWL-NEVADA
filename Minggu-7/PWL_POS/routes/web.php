@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 // JOBSHEET 5 LANGKAH 5 PRAKTIKUM 2
-Route::get('/', [WelcomeController::class, 'index']);
+
 
 Route::pattern('id', '[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
 
@@ -36,7 +36,7 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function() { // artinya semua route di dalam group ini harus login dulu
 
-
+    Route::get('/', [WelcomeController::class, 'index']);
     // masukkan semua route yang perlu autentikasi di sini
 
     //route usercontroller

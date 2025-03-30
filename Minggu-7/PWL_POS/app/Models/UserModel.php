@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable; // implementasi class Authenticatable
 
 
-class UserModel extends Authenticatable
+class UserModel extends Authenticatable 
 {
     use HasFactory;
     
