@@ -118,25 +118,28 @@ Route::middleware(['auth'])->group(function() { // artinya semua route di dalam 
     });
 
     //route barang 
-    Route::group(['prefix' => 'barang'], function () {
-        Route::get('/', [BarangController::class, 'index']); // menampilkan halaman awal barang
-        Route::post('/list', [BarangController::class, 'list']); // menampilkan data barang dalam bentuk json untuk datatables
-        Route::get('/create', [BarangController::class, 'create']); // menampilkan halaman form tambah barang
-        Route::post('/', [BarangController::class, 'store']); // menyimpan data barang baru
-        //js 6 tugas
-        Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
-        Route::post('/ajax', [BarangController::class, 'store_ajax']);
-        //js 6 tugas
-        Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
-        Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
-        //js 6 tugas
-        Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
-        Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
-        
-        Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail barang
-        Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
-        Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang
-        Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data barang
+    Route::middleware(['authorize:ADM,MNG'])->group(function(){
+
+        Route::group(['prefix' => 'barang'], function () {
+            Route::get('/', [BarangController::class, 'index']); // menampilkan halaman awal barang
+            Route::post('/list', [BarangController::class, 'list']); // menampilkan data barang dalam bentuk json untuk datatables
+            Route::get('/create', [BarangController::class, 'create']); // menampilkan halaman form tambah barang
+            Route::post('/', [BarangController::class, 'store']); // menyimpan data barang baru
+            //js 6 tugas
+            Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
+            Route::post('/ajax', [BarangController::class, 'store_ajax']);
+            //js 6 tugas
+            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
+            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
+            //js 6 tugas
+            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
+            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
+            
+            Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail barang
+            Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
+            Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang
+            Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data barang
+        });
     });
 
     //route supp
