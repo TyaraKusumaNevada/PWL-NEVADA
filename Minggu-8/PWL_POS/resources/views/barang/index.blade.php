@@ -1,3 +1,4 @@
+@extends('layouts.template')
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -80,9 +81,8 @@
             },
             columns: [
                 {
-                    data: "No_Urut",
+                    data: "DT_RowIndex",
                     className: "text-center",
-                    width: "5%",
                     orderable: false,
                     searchable: false
                 },

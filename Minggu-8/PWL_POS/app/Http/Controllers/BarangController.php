@@ -231,3 +231,4 @@ class BarangController extends Controller
         return redirect('/');
     }
 }
+
