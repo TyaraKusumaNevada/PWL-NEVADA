@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController; 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -199,6 +200,12 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [PenjualanController::class, 'destroy']);
         });
     });
+
+    
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.updatePhoto');
+
 
 
     // Route::group(['prefix' => 'user'], function () {
