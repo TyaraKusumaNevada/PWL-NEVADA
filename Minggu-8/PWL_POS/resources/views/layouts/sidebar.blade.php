@@ -21,6 +21,7 @@
       <a href="{{ route('profile.index') }}" class="nav-link {{ ($activeMenu == 'profile') ? 'active' : '' }}">
           <i class="nav-icon fas fa-user-circle"></i>
           <p>Profile</p>
+          
       </a>
       </li>
       <li class="nav-header">Data Pengguna</li>

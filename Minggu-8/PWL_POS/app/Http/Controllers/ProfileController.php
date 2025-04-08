@@ -29,7 +29,7 @@ class ProfileController extends Controller
     public function editProfileAjax()
     {
         // Kembalikan view modal untuk mengubah foto profil
-        return view('profile.edit_ajax');
+        return view('profile_edit');
     }
 
     public function updatePhoto(Request $request)
@@ -41,12 +41,17 @@ class ProfileController extends Controller
         // Ambil user yang sedang login
         $user = Auth::user();
 
+        // Jika sudah ada foto lama, hapus dari disk 'public/uploads'
+        if ($user->foto) {
+            Storage::disk('public')->delete('uploads/' . $user->foto);
+        }
+
         // Proses simpan file ke folder 'public/uploads'
         $file = $request->file('foto');
         $fileName = time() . '_' . $file->getClientOriginalName();
         $file->storeAs('public/uploads', $fileName);
 
-        // Simpan path foto ke database (pastikan kolom-nya sesuai, misal 'foto')
+        // Simpan path foto ke database (pastikan kolomnya sesuai, misalnya 'foto')
         $user->foto = $fileName;
         $user->save();
 
@@ -56,4 +61,5 @@ class ProfileController extends Controller
             'foto_path' => asset('storage/uploads/' . $fileName)
         ]);
     }
+
 }

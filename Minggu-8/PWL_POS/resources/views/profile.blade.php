@@ -9,7 +9,7 @@
         <div class="card shadow-lg border-0 rounded-3">
           <div class="card-body p-4">
             <div class="d-flex flex-column align-items-center text-center">
-              <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('adminlte/dist/img/user2-160x160.jpg') }}"
+              <img src="{{ $user->foto ? asset('uploads/' . $user->foto) : asset('adminlte/dist/img/user2-160x160.jpg') }}"
                    class="rounded-circle shadow-sm mb-3"
                    alt="Foto Profil"
                    width="140" height="140">

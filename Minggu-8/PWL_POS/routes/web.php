@@ -208,6 +208,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
     Route::post('profile/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.updatePhoto');
 
 
+    
 
     // Route::group(['prefix' => 'user'], function () {
     //     Route::get('/', [UserController::class, 'index']);             // menampilkan halaman awal user
