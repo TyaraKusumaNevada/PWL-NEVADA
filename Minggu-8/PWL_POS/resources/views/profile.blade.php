@@ -41,7 +41,7 @@
 
     $(document).ready(function(){
         $('#btnEditProfile').click(function(){
-            modalAction("{{ url('user/profile_ajax') }}");
+            modalAction("{{ url('profile_ajax') }}");
         });
     });
 </script>

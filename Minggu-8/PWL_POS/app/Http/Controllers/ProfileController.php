@@ -26,34 +26,33 @@ class ProfileController extends Controller
     }
 
 
+    public function editProfileAjax()
+    {
+        // Kembalikan view modal untuk mengubah foto profil
+        return view('profile.edit_ajax');
+    }
+
     public function updatePhoto(Request $request)
     {
         $request->validate([
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048', 
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // Ambil user yang sedang login
         $user = Auth::user();
 
-        // Jika sudah ada foto lama, bisa dihapus atau di-overwrite
-        // if ($user->foto) {
-        //     Storage::delete('public/uploads/'.$user->foto);
-        // }
-
-        // Simpan file ke folder 'public/uploads' (dalam storage)
-        // Nanti boleh gunakan "php artisan storage:link" supaya folder public/storage -> storage/app/public
+        // Proses simpan file ke folder 'public/uploads'
         $file = $request->file('foto');
         $fileName = time() . '_' . $file->getClientOriginalName();
         $file->storeAs('public/uploads', $fileName);
 
-        // Update path foto di database
+        // Simpan path foto ke database (pastikan kolom-nya sesuai, misal 'foto')
         $user->foto = $fileName;
         $user->save();
 
-        // Response untuk Ajax
         return response()->json([
-            'status' => 'success',
-            'message' => 'Foto profil berhasil diperbarui!',
+            'status'    => 'success',
+            'message'   => 'Foto profil berhasil diperbarui!',
             'foto_path' => asset('storage/uploads/' . $fileName)
         ]);
     }

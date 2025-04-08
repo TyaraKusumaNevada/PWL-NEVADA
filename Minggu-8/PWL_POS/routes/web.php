@@ -204,7 +204,8 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
     
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::post('/profile/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.updatePhoto');
+    Route::get('profile_ajax', [ProfileController::class, 'editProfileAjax']);
+    Route::post('profile/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.updatePhoto');
 
 
 
