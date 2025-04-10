@@ -18,7 +18,32 @@ class BarangController extends Controller
         // $row = DB::delete('delete from m_barang where barang_kode = ?', ['MSK-008']);
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::select('select * from m_barang');
+        // $data = DB::select('select * from m_barang');
+        // return view('barang', ['data' => $data]);
+
+        //=============Jobsheet 3 Praktikum 5==================
+        // $data = [
+        //     'kategori_id' => 1,
+        //     'barang_kode' => 'MSK-007',
+        //     'barang_nama' => 'Seruling',
+        //     'harga_jual' => 150000,
+        //     'harga_beli' => 100000,
+        //     'created_at' => now()
+        // ];
+        // DB::table('m_barang')->insert($data);
+        // return 'Insert data baru berhasil';
+
+        // $row = DB::table('m_barang')->where('barang_kode', 'MSK-007')->update(['harga_jual' => '130000',]);
+        // return 'Update data berhasil, jumlah data yang diupdate: '.$row. ' baris';
+
+        // $row =  DB::table('m_barang')->where('barang_kode', 'MSK-007')->delete();
+        // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
+
+        $data = DB::table('m_barang')->get();
         return view('barang', ['data' => $data]);
+
+
     }
+        
+    
 }

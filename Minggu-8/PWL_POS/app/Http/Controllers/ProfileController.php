@@ -42,8 +42,8 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Jika sudah ada foto lama, hapus dari disk 'public/uploads'
-        if ($user->foto) {
-            Storage::disk('public')->delete('uploads/' . $user->foto);
+        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
         }
 
         // Proses simpan file ke folder 'public/uploads'

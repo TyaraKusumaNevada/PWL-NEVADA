@@ -18,7 +18,30 @@ class StokController extends Controller
         // $row = DB::delete('delete from t_stok where stok_id = ?', [10]);
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::select('select * from t_stok');
+        // $data = DB::select('select * from t_stok');
+        // return view('stok', ['data' => $data]);
+
+
+        //===========Jobsheet 3 Praktikum 5===========
+        // $data = [
+        //     'barang_id' => '10',
+        //     'user_id' => '1',
+        //     'supplier_id' => '1',
+        //     'stok_tanggal_masuk' => now(),
+        //     'stok_jumlah' => '100',
+        //     'created_at' => now()
+        // ];
+
+        // DB::table('t_stok')->insert($data);
+        // return 'Insert data baru berhasil';
+
+        // $row = DB::table('t_stok')->where('stok_id', '10')->update(['stok_jumlah' => '130']);
+        // return 'Update data berhasil, jumlah data yang diupdate: '.$row. ' baris';
+
+        // $row = DB::table('t_stok')->where('stok_id', '10')->delete();
+        // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
+
+        $data = DB::table('t_stok')->get();
         return view('stok', ['data' => $data]);
     }
 }

@@ -18,7 +18,26 @@ class KategoriController extends Controller
         // $row = DB::delete('delete from m_kategori where kategori_kode = ?', ['BPB']);
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::select('select * from m_kategori');
+        // $data = DB::select('select * from m_kategori');
+        // return view('kategori', ['data' => $data]);
+
+        //============Jobsheet 3 Praktikum 5==============
+        // $data = [
+        //     'kategori_kode' => 'SND',
+        //     'kategori_nama' => 'Sandal',
+        //     'created_at' => now()
+        // ];
+
+        // DB::table('m_kategori')->insert($data);
+        // return 'Insert data baru berhasil';
+
+        // $row = DB::table('m_kategori')->where('kategori_kode', 'SND')->update(['kategori_nama' => 'Sendal']);
+        // return 'Update data berhasil, jumlah data yang diupdate: '.$row. ' baris';
+
+        // $row = DB::table('m_kategori')->where('kategori_kode', 'SND')->delete();
+        // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
+
+        $data = DB::table('m_kategori')->get();
         return view('kategori', ['data' => $data]);
     }
 }
