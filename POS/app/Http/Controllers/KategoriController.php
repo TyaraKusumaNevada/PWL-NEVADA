@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,7 +38,26 @@ class KategoriController extends Controller
         // $row = DB::table('m_kategori')->where('kategori_kode', 'SND')->delete();
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::table('m_kategori')->get();
-        return view('kategori', ['data' => $data]);
+        // $data = DB::table('m_kategori')->get();
+        // return view('kategori', ['data' => $data]);
+
+
+        // ============Jobsheet 3 Praktikum 6====================
+        // $data = [
+        //     'kategori_kode' => 'SND',
+        //     'kategori_nama' => 'Sandal',
+        //     'created_at' => now()
+        // ];
+
+        // KategoriModel::insert($data);
+
+        $data =[
+            'kategori_nama' => 'Alas kaki'
+        ];
+
+        KategoriModel::where('kategori_kode', 'SND')->update($data);
+
+        $kategori = KategoriModel::all();
+        return view('kategori', ['data' => $kategori]);
     }
 }

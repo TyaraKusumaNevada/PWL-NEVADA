@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StokModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,7 +42,28 @@ class StokController extends Controller
         // $row = DB::table('t_stok')->where('stok_id', '10')->delete();
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::table('t_stok')->get();
-        return view('stok', ['data' => $data]);
+        // $data = DB::table('t_stok')->get();
+        // return view('stok', ['data' => $data]);
+
+        // =====Jobsheet 3 Praktikum 6====
+        // $data = [
+        //     'barang_id' => '11',
+        //     'user_id' => '1',
+        //     'supplier_id' => '1',
+        //     'stok_tanggal_masuk' => now(),
+        //     'stok_jumlah' => '100',
+        //     'created_at' => now()
+        // ];
+
+        // StokModel::insert($data);
+
+        $data =[
+            'stok_jumlah' => '160'
+        ];
+
+        StokModel::where('stok_id', '3')->update($data);
+
+        $stok = StokModel::all();
+        return view('stok', ['data' => $stok]);
     }
 }

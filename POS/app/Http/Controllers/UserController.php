@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\DB;
 
+use App\Models\UserModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
@@ -38,8 +39,24 @@ class UserController extends Controller {
         // $row = DB::table('m_user')->where('username', 'kasirSatu')->delete();
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::table('m_user')->get();
-        return view('user', ['data' => $data]);
+        // ====Jobsheet 3 Prak 6========
+        // $data = [
+        //     'username' => 'Kasir-1',
+        //     'nama' => 'Kasir',
+        //     'password' => Hash::make('12345'), // class untuk mengenkripsi/hash password
+        //     'level_id' => 4
+        // ];
+
+        // UserModel::insert($data);
+
+        $data =[
+            'nama' => 'Administrator'
+        ];
+
+        UserModel::where('username', 'admin')->update($data);
+
+        $user = UserModel::all();
+        return view('user', ['data' => $user]);
 
         // public function user($id, $name) {
         //         return view('user', compact('id', 'name'));

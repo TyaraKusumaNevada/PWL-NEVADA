@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LevelModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -39,9 +40,28 @@ class LevelController extends Controller
         // $row = DB::table('m_level')->where('level_kode', 'CUS')->delete();
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
-        $data = DB::table('m_level')->get();
-        return view('level', ['data' => $data]);
-    }
+        // $data = DB::table('m_level')->get();
+        // return view('level', ['data' => $data]);
 
+
+        // ===========Jobsheet 3 Praktikum 6===========================================================================================
+        // $data = [
+        //     'level_kode' => 'CUS',
+        //     'level_nama' => 'Customer',
+        //     'created_at' => now()
+        // ];
+
+        // LevelModel::insert($data);
+
+        $data =[
+            'level_nama' => 'Pelanggan'
+        ];
+
+        LevelModel::where('level_kode', 'CUS')->update($data);
+
+        $level = LevelModel::all();
+        return view('level', ['data' => $level]);
+
+    }
 
 }
