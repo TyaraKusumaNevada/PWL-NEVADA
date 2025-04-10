@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profil Pengguna</title>
+    <title>Data User</title>
 </head>
 <body>
-    <h1>Profil Pengguna</h1>
-    <h2 style="font-weight: normal;">Menampilkan Profil Pengguna Point of Sales</h2>
-
-    <p><strong>ID:</strong> {{ $id }}</p>
-    <p><strong>Nama:</strong> {{ $name }}</p>
-
-    <a href="{{ route('home') }}">Kembali ke Halaman Home</a>
+    <h1>Data User</h1>
+    <table border="1" cellpadding="2" cellspacing="0">
+        <tr>
+            <th>User ID</th>
+            <th>Level ID</th>
+            <th>Username</th>
+            <th>Nama</th>
+        </tr>
+        @foreach ($data as $d)
+        <tr>
+            <td>{{ $d->user_id }}</td>
+            <td>{{ $d->level_id }}</td>
+            <td>{{ $d->username }}</td>
+            <td>{{ $d->nama }}</td>
+        </tr>
+        @endforeach
+    </table>
 </body>
 </html>
