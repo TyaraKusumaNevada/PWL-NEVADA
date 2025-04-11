@@ -15,5 +15,5 @@ class UserModel extends Model
 
     //=======Jaobsheet 4 Prak 1=======
 
-    protected $fillable = ['level_id', 'username', 'nama'];
+   protected $fillable = ['username', 'nama', 'password', 'level_id'];
 }
