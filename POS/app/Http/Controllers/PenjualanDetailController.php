@@ -54,11 +54,20 @@ class PenjualanDetailController extends Controller
 
     //     PenjualanDetailModel::insert($data);
 
-        $data =[
-            'jumlah' => '10'
-        ];
+        // $data =[
+        //     'jumlah' => '10'
+        // ];
 
-        PenjualanDetailModel::where('detail_id', '16')->update($data);
+        // PenjualanDetailModel::where('detail_id', '16')->update($data);
+
+        // ========Jobsheet 4 Praktikum 1=========================
+        $data = [
+            'penjualan_id' => '10',
+            'barang_id' => '9',
+            'jumlah' => '1',
+            'harga' => '400000',
+        ];
+        PenjualanDetailModel::create($data);
 
         $penjualanDetail = PenjualanDetailModel::all();
         return view('penjualan_detail', ['data' => $penjualanDetail]);

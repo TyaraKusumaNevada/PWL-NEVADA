@@ -55,17 +55,29 @@ class BarangController extends Controller
 
         // BarangModel::insert($data);
 
-        $data =[
-            'harga_jual' => '4000000'
-        ];
+        // $data =[
+        //     'harga_jual' => '4000000'
+        // ];
 
-        BarangModel::where('barang_kode', 'SPT-008')->update($data);
+        // BarangModel::where('barang_kode', 'SPT-008')->update($data);
+
+        // $barang = BarangModel::all();
+        // return view('barang', ['data' => $barang]);
+
+        // ========Jobsheet 4 Praktikum 1=========================
+
+        $data = [
+            'kategori_id' => '2',
+            'barang_kode' => 'OTM-006',
+            'barang_nama' => 'Jok Beat Karbu',
+            'harga_jual' => '300000',
+            'harga_beli' => '200000',
+        ];
+        BarangModel::create($data);
 
         $barang = BarangModel::all();
         return view('barang', ['data' => $barang]);
 
-
     }
         
-    
 }

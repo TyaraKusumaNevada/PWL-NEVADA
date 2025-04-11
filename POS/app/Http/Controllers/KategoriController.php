@@ -51,13 +51,24 @@ class KategoriController extends Controller
 
         // KategoriModel::insert($data);
 
-        $data =[
-            'kategori_nama' => 'Alas kaki'
+        // $data =[
+        //     'kategori_nama' => 'Alas kaki'
+        // ];
+
+        // KategoriModel::where('kategori_kode', 'SND')->update($data);
+
+        // $kategori = KategoriModel::all();
+        // return view('kategori', ['data' => $kategori]);
+
+        // ========Jobsheet 4 Praktikum 1=========================
+
+        $data = [
+            'kategori_kode' => 'MNM',
+            'kategori_nama' => 'Minuman',
         ];
+        KategoriModel::create($data);
 
-        KategoriModel::where('kategori_kode', 'SND')->update($data);
-
-        $kategori = KategoriModel::all();
+        $kategori = KategoriModel::all();        
         return view('kategori', ['data' => $kategori]);
     }
 }
