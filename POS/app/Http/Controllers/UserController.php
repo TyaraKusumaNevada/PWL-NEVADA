@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\UserModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller {
 
@@ -49,14 +50,27 @@ class UserController extends Controller {
 
         // UserModel::insert($data);
 
-        $data =[
-            'nama' => 'Administrator'
+        // $data =[
+        //     'nama' => 'Administrator'
+        // ];
+
+        // UserModel::where('username', 'admin')->update($data);
+
+        // $user = UserModel::all();
+        // return view('user', ['data' => $user]);
+
+        //========== Jobsheet 4 prak 1=========
+        $data = [
+            'level_id' => 2,
+            'username' => 'Manager 2',
+            'nama' => ' Budi Manager 2',
+            'password' => Hash::make('123456')
         ];
-
-        UserModel::where('username', 'admin')->update($data);
-
-        $user = UserModel::all();
+        UserModel::insert($data);
+        
+        $user = UserModel::all(); 
         return view('user', ['data' => $user]);
+
 
         // public function user($id, $name) {
         //         return view('user', compact('id', 'name'));
