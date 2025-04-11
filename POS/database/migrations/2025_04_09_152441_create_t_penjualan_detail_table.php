@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('detail_id');
             $table->unsignedBigInteger('penjualan_id')->index();
             $table->unsignedBigInteger('barang_id')->index();
-            $table->integer('jumlah_barang');
-            $table->integer('harga_barang');
+            $table->integer('jumlah');
+            $table->integer('harga');
             $table->timestamps();
 
             $table->foreign('penjualan_id')->references('penjualan_id')->on('t_penjualan');

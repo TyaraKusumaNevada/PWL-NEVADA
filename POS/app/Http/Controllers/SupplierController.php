@@ -27,8 +27,8 @@ class SupplierController extends Controller
 
         // =========Jobsheet 3 Praktikum 6===========================================================================================
         // $data = [
-        //     'supplier_kode' => 'SPL104',
-        //     'supplier_nama' => 'PT Rahmat Jaya',
+        //     'supplier_kode' => 'SUP005',
+        //     'supplier_nama' => 'PT Budi',
         //     'supplier_alamat' => 'JL Agus Dibroho',
         //     'created_at' => now()
         // ];

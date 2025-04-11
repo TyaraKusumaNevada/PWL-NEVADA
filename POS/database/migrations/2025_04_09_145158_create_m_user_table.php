@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');//menambahkan kolom password dengan tipe data varchar
             $table->timestamps();
 
-            table->foreign('level_id')->references('level_id')->on('m_level');//menambahkan foreign key level_id yang merujuk ke kolom level_id yang merupakan primary key pada tabel m_level
+            $table->foreign('level_id')->references('level_id')->on('m_level');//menambahkan foreign key
         });
     }
 
