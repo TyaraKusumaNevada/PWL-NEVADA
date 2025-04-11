@@ -35,11 +35,23 @@ class SupplierController extends Controller
 
         // SupplierModel::insert($data);
 
-        $data =[
-            'supplier_nama' => 'PT Klampok Tekstil',
-        ];
+        // $data =[
+        //     'supplier_nama' => 'PT Klampok Tekstil',
+        // ];
 
-        SupplierModel::where('supplier_kode', 'SUP04')->update($data);
+        // SupplierModel::where('supplier_kode', 'SUP04')->update($data);
+
+        // $supplier = SupplierModel::all();
+        // return view('supplier', ['data' => $supplier]);
+
+
+        // ========Jobsheet 4 Praktikum 1=========================
+        $data = [
+            'supplier_kode' => 'SUP04',
+            'supplier_nama' => 'PT Sumber Abadi',
+            'supplier_alamat' => 'JL Bandung No. 5',
+        ];
+        SupplierModel::create($data);
 
         $supplier = SupplierModel::all();
         return view('supplier', ['data' => $supplier]);

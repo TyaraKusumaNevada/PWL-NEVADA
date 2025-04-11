@@ -53,11 +53,20 @@ class LevelController extends Controller
 
         // LevelModel::insert($data);
 
-        $data =[
-            'level_nama' => 'Pelanggan'
-        ];
+        // $data =[
+        //     'level_nama' => 'Pelanggan'
+        // ];
 
-        LevelModel::where('level_kode', 'CUS')->update($data);
+        // LevelModel::where('level_kode', 'CUS')->update($data);
+
+        // $level = LevelModel::all();
+        // return view('level', ['data' => $level]);
+
+        $data = [
+            'level_kode' => 'HRD',
+            'level_nama' => 'Human Resource Development'
+        ];
+        LevelModel::create($data);
 
         $level = LevelModel::all();
         return view('level', ['data' => $level]);
