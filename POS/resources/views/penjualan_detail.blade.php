@@ -18,8 +18,8 @@
             <td>{{ $d->detail_id }}</td>
             <td>{{ $d->penjualan_id }}</td>
             <td>{{ $d->barang_id }}</td>
-            <td>{{ $d->jumlah_barang }}</td>
-            <td>{{ $d->harga_barang }}</td>
+            <td>{{ $d->jumlah }}</td>
+            <td>{{ $d->harga }}</td>
         </tr>
         @endforeach
     </table>

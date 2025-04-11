@@ -10,7 +10,7 @@ class StokController extends Controller
 {
     public function index(){
         //============Jobsheet 3 Praktikum 4============
-        // DB::insert('insert into t_stok(barang_id, user_id, supplier_id, stok_tanggal_masuk, stok_jumlah, created_at) values(?, ?, ?, ?, ?, ?)', [10, 1, 1, now(), 100, now()]);
+        // DB::insert('insert into t_stok(barang_id, user_id, supplier_id, stok_tanggal, stok_jumlah, created_at) values(?, ?, ?, ?, ?, ?)', [10, 1, 1, now(), 100, now()]);
         // return 'Insert data baru berhasil';
 
         // $row = DB::update('update t_stok set stok_jumlah = ? where stok_id = ?', [15, 10]);
@@ -28,7 +28,7 @@ class StokController extends Controller
         //     'barang_id' => '10',
         //     'user_id' => '1',
         //     'supplier_id' => '1',
-        //     'stok_tanggal_masuk' => now(),
+        //     'stok_tanggal' => now(),
         //     'stok_jumlah' => '100',
         //     'created_at' => now()
         // ];
@@ -50,7 +50,7 @@ class StokController extends Controller
         //     'barang_id' => '11',
         //     'user_id' => '1',
         //     'supplier_id' => '1',
-        //     'stok_tanggal_masuk' => now(),
+        //     'stok_tanggal' => now(),
         //     'stok_jumlah' => '100',
         //     'created_at' => now()
         // ];

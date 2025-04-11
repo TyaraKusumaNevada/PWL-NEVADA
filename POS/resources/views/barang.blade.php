@@ -20,8 +20,8 @@
             <td>{{ $d->kategori_id }}</td>
             <td>{{ $d->barang_kode }}</td>
             <td>{{ $d->barang_nama }}</td>
-            <td>{{ $d->harga_jual }}</td>
             <td>{{ $d->harga_beli }}</td>
+            <td>{{ $d->harga_jual }}</td>
         </tr>
         @endforeach
     </table>

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 class PenjualanController extends Controller {
 
     public function index(){
-        //======Jobsheet 3 Praktikum 4========
-        // DB::insert('insert into t_penjualan(user_id, pembeli, penjualan_kode, tanggal_penjualan, created_at) values(?, ?, ?, ?, ?)', [3, 'Ayu Widodo', 'TR011', now(), now()]);
+        // ======Jobsheet 3 Praktikum 4========
+        // DB::insert('insert into t_penjualan(user_id, pembeli, penjualan_kode, penjualan_tanggal, created_at) values(?, ?, ?, ?, ?)', [3, 'Ayu Widodo', 'TR011', now(), now()]);
         // return 'Insert data baru berhasil';
 
         // $row = DB::update('update t_penjualan set pembeli = ? where penjualan_kode = ?', ['Ayu Widodo', 'TR011']);
@@ -22,12 +22,12 @@ class PenjualanController extends Controller {
         // $data = DB::select('select * from t_penjualan');
         // return view('penjualan', ['data' => $data]);
 
-        //=================Jobsheet 3 Praktikum 5==========
+        // // =================Jobsheet 3 Praktikum 5==========
         // $data = [
         //     'user_id' => '1',
         //     'pembeli' => 'Ayu Widodo',
         //     'penjualan_kode' => 'TR011',
-        //     'tanggal_penjualan' => now(),
+        //     'penjualan_tanggal' => now(),
         //     'created_at' => now()
         // ];
 
@@ -41,19 +41,19 @@ class PenjualanController extends Controller {
         // return 'Delete data berhasil, jumlah data yang dihapus: '.$row. ' baris';
 
         
-        // ============Jobsheet 3 Praktikum 6=======
+        // // ============Jobsheet 3 Praktikum 6=======
         // $data = [
         //     'user_id' => '3',
         //     'pembeli' => 'Ayu Widodo',
         //     'penjualan_kode' => 'TR011',
-        //     'tanggal_penjualan' => now(),
+        //     'penjualan_tanggal' => now(),
         //     'created_at' => now()
         // ];
 
         // PenjualanModel::insert($data);
 
         $data =[
-            'pembeli' => 'Ayu Wi',
+            'pembeli' => 'Ayu Wiro',
         ];
 
         PenjualanModel::where('penjualan_kode', 'TR011')->update($data);

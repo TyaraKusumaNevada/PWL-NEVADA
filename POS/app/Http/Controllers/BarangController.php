@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 class BarangController extends Controller
 {
     public function index(){
-        //===================Jobsheet 3 Praktikum 4==========
-        // DB::insert('insert into m_barang(kategori_id, barang_kode, barang_nama, harga_jual, harga_beli, created_at) values(?, ?, ?, ?, ?, ?)', [1, 'MSK-008', 'Kalimba', 180000, 100000, now()]);
+        // ===================Jobsheet 3 Praktikum 4==========
+        // DB::insert('insert into m_barang(kategori_id, barang_kode, barang_nama, harga_beli, harga_jual, created_at) values(?, ?, ?, ?, ?, ?)', [1, 'MSK-008', 'Kalimba', 180000, 100000, now()]);
         // return 'Insert data baru berhasil';
 
         // $row = DB::update('update m_barang set harga_jual = ? where barang_kode = ?', [110000, 'MSK-002']);
@@ -22,13 +22,13 @@ class BarangController extends Controller
         // $data = DB::select('select * from m_barang');
         // return view('barang', ['data' => $data]);
 
-        //=============Jobsheet 3 Praktikum 5==================
+        // // =============Jobsheet 3 Praktikum 5==================
         // $data = [
         //     'kategori_id' => 1,
         //     'barang_kode' => 'MSK-007',
         //     'barang_nama' => 'Seruling',
-        //     'harga_jual' => 150000,
         //     'harga_beli' => 100000,
+        //     'harga_jual' => 150000,
         //     'created_at' => now()
         // ];
         // DB::table('m_barang')->insert($data);
@@ -43,17 +43,17 @@ class BarangController extends Controller
         // $data = DB::table('m_barang')->get();
         // return view('barang', ['data' => $data]);
 
-        // ==========Jobsheet 3 Praktikum 6================
-        $data = [
-            'kategori_id' => '1',
-            'barang_kode' => 'SPT-008',
-            'barang_nama' => 'Converse',
-            'harga_jual' => '300000',
-            'harga_beli' => '600000',
-            'created_at' => now()
-        ];
+        // // ==========Jobsheet 3 Praktikum 6================
+        // $data = [
+        //     'kategori_id' => '1',
+        //     'barang_kode' => 'SPT-008',
+        //     'barang_nama' => 'Converse',
+        //     'harga_beli' => '600000',
+        //     'harga_jual' => '300000',
+        //     'created_at' => now()
+        // ];
 
-        BarangModel::insert($data);
+        // BarangModel::insert($data);
 
         $data =[
             'harga_jual' => '4000000'
