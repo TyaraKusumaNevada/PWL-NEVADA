@@ -113,6 +113,7 @@ class UserController extends Controller {
          $user->wasChanged('nama'); // false
          dd($user->wasChanged(['nama', 'username']));
          
+         
     
     }
 }
