@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BarangModel;
+use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -64,20 +65,73 @@ class BarangController extends Controller
         // $barang = BarangModel::all();
         // return view('barang', ['data' => $barang]);
 
-        // ========Jobsheet 4 Praktikum 1=========================
+        // ========Jobsheet 4 Praktikum 1========
 
-        $data = [
-            'kategori_id' => '2',
-            'barang_kode' => 'OTM-006',
-            'barang_nama' => 'Jok Beat Karbu',
-            'harga_jual' => '300000',
-            'harga_beli' => '200000',
-        ];
-        BarangModel::create($data);
+        // $data = [
+        //     'kategori_id' => '2',
+        //     'barang_kode' => 'OTM-006',
+        //     'barang_nama' => 'Jok Beat Karbu',
+        //     'harga_jual' => '300000',
+        //     'harga_beli' => '200000',
+        // ];
+        // BarangModel::create($data);
 
         $barang = BarangModel::all();
         return view('barang', ['data' => $barang]);
 
+
+        
+
+    }
+
+    //===================Jobsheet 4 Praktikum 2.6=============
+    public function tambah()
+    {
+        $kategori = KategoriModel::all();
+        return view('barang_tambah', ['kategori' => $kategori]);
+    }
+
+    public function tambah_simpan(Request $request)
+    {
+        BarangModel::create([
+            'kategori_id' => $request->kategori_id,
+            'barang_kode' => $request->barang_kode,
+            'barang_nama' => $request->barang_nama,
+            'harga_beli'  => $request->harga_beli,
+            'harga_jual'  => $request->harga_jual,
+        ]);
+
+        return redirect('/barang');
+    }
+
+    public function ubah($id)
+    {
+        $barang = BarangModel::find($id);
+        $kategoris = KategoriModel::all();
+        return view('barang_ubah', ['data' => $barang, 'kategori' => $kategoris]);
+    }
+
+    public function ubah_simpan($id, Request $request)
+    {
+        $barang = BarangModel::find($id);
+
+        $barang->kategori_id = $request->kategori_id;
+        $barang->barang_kode = $request->barang_kode;
+        $barang->barang_nama = $request->barang_nama;
+        $barang->harga_beli  = $request->harga_beli;
+        $barang->harga_jual  = $request->harga_jual;
+
+        $barang->save();
+
+        return redirect('/barang');
+    }
+
+    public function hapus($id)
+    {
+        $barang = BarangModel::find($id);
+        $barang->delete();
+
+        return redirect('/barang');
     }
         
 }

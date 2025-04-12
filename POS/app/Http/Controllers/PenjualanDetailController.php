@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PenjualanModel;
+use App\Models\BarangModel;
 use App\Models\PenjualanDetailModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,17 +63,65 @@ class PenjualanDetailController extends Controller
         // PenjualanDetailModel::where('detail_id', '16')->update($data);
 
         // ========Jobsheet 4 Praktikum 1=========================
-        $data = [
-            'penjualan_id' => '10',
-            'barang_id' => '9',
-            'jumlah' => '1',
-            'harga' => '400000',
-        ];
-        PenjualanDetailModel::create($data);
+        // $data = [
+        //     'penjualan_id' => '10',
+        //     'barang_id' => '9',
+        //     'jumlah' => '1',
+        //     'harga' => '400000',
+        // ];
+        // PenjualanDetailModel::create($data);
 
         $penjualanDetail = PenjualanDetailModel::all();
-        return view('penjualan_detail', ['data' => $penjualanDetail]);
+        return view('penjualanDetail', ['data' => $penjualanDetail]);
 
     }
-}
 
+    public function tambah()
+    {
+        $penjualans = PenjualanModel::all();
+        $barangs = BarangModel::all();
+        return view('penjualanDetail_tambah', ['penjualans' => $penjualans, 'barangs' => $barangs]);
+    }
+
+    public function tambah_simpan(Request $request)
+    {
+        PenjualanDetailModel::create([
+            'penjualan_id' => $request->penjualan_id,
+            'barang_id' => $request->barang_id,
+            'jumlah' => $request->jumlah,
+            'harga' => $request->harga,
+        ]);
+
+        return redirect('/penjualan-detail');
+    }
+
+    public function ubah($id)
+    {
+        $detail = PenjualanDetailModel::find($id);
+        $penjualans = PenjualanModel::all();
+        $barangs = BarangModel::all();
+        return view('penjualanDetail_ubah', ['data' => $detail, 'penjualans' => $penjualans, 'barangs' => $barangs]);
+    }
+
+    public function ubah_simpan($id, Request $request)
+    {
+        $detail = PenjualanDetailModel::find($id);
+
+        $detail->penjualan_id = $request->penjualan_id;
+        $detail->barang_id = $request->barang_id;
+        $detail->jumlah = $request->jumlah;
+        $detail->harga = $request->harga;
+
+        $detail->save();
+
+        return redirect('/penjualan-detail');
+    }
+
+    public function hapus($id)
+    {
+        $detail = PenjualanDetailModel::find($id);
+        $detail->delete();
+
+        return redirect('/penjualan-detail');
+    }
+ }

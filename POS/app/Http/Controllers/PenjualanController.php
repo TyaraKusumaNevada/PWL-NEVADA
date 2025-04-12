@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PenjualanModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -64,16 +65,65 @@ class PenjualanController extends Controller {
         
         // ========Jobsheet 4 Praktikum 1=========================
 
-        $data = [
-            'user_id' => '2',
-            'pembeli' => 'Setia Budi',
-            'penjualan_kode' => 'TR012',
-            'penjualan_tanggal' => now(),
-        ];
-        PenjualanModel::create($data);
+        // $data = [
+        //     'user_id' => '2',
+        //     'pembeli' => 'Setia Budi',
+        //     'penjualan_kode' => 'TR012',
+        //     'penjualan_tanggal' => now(),
+        // ];
+        // PenjualanModel::create($data);
 
         $penjualan = PenjualanModel::all();
         return view('penjualan', ['data' => $penjualan]);
+    }
+
+
+    //==================Jobsheet 4 Praktikum 2.6=========
+    public function tambah()
+    {
+        $users = UserModel::all();
+        return view('penjualan_tambah', ['users' => $users]);
+    }
+
+    public function tambah_simpan(Request $request)
+    {
+        PenjualanModel::create([
+            'user_id' => $request->user_id,
+            'pembeli' => $request->pembeli,
+            'penjualan_kode' => $request->penjualan_kode,
+            'penjualan_tanggal' => $request->penjualan_tanggal,
+        ]);
+
+        return redirect('/penjualan');
+    }
+
+    public function ubah($id)
+    {
+        $penjualan = PenjualanModel::find($id);
+        $users = UserModel::all();
+        return view('penjualan_ubah', ['data' => $penjualan, 'users' => $users]);
+    }
+
+    public function ubah_simpan($id, Request $request)
+    {
+        $penjualan = PenjualanModel::find($id);
+
+        $penjualan->user_id = $request->user_id;
+        $penjualan->pembeli = $request->pembeli;
+        $penjualan->penjualan_kode = $request->penjualan_kode;
+        $penjualan->penjualan_tanggal = $request->penjualan_tanggal;
+
+        $penjualan->save();
+
+        return redirect('/penjualan');
+    }
+
+    public function hapus($id)
+    {
+        $penjualan = PenjualanModel::find($id);
+        $penjualan->delete();
+
+        return redirect('/penjualan');
     }
 
     // public function penjualan() {

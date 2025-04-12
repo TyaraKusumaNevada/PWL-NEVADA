@@ -20,15 +20,14 @@ class PenjualanDetailModel extends Model
         'jumlah',
     ];
 
-    // Relasi ke model Penjualan (jika ada)
-    public function penjualan()
-    {
-        return $this->belongsTo(PenjualanModel::class, 'penjualan_id');
+    
+//    ===Jobsheet 4 Prakt 2.7====
+    public function penjualan(): BelongsTo {
+        return $this->belongsTo(PenjualanModel::class, 'penjualan_id', 'penjualan_id');
     }
 
-    // Relasi ke model Barang (jika ada)
-    public function barang()
-    {
-        return $this->belongsTo(BarangModel::class, 'barang_id');
+    public function barang(): BelongsTo {
+        return $this->belongsTo(BarangModel::class, 'barang_id', 'barang_id');
     }
+    
 }

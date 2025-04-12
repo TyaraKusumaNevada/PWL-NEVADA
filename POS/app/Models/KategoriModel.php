@@ -19,7 +19,10 @@ class KategoriModel extends Model
         'kategori_nama'
     ];
 
-    public function barang(): HasMany {
+    //========== Jobsheet 4 Praktikum 2.7===============
+
+    public function barang(): HasMany
+    {
         return $this->hasMany(BarangModel::class, 'kategori_id', 'kategori_id');
     }
 }

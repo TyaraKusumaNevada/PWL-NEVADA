@@ -62,15 +62,57 @@ class LevelController extends Controller
         // $level = LevelModel::all();
         // return view('level', ['data' => $level]);
 
-        $data = [
-            'level_kode' => 'HRD',
-            'level_nama' => 'Human Resource Development'
-        ];
-        LevelModel::create($data);
+        // $data = [
+        //     'level_kode' => 'HRD',
+        //     'level_nama' => 'Human Resource Development'
+        // ];
+        // LevelModel::create($data);
 
         $level = LevelModel::all();
         return view('level', ['data' => $level]);
 
+    }
+
+    // ====Jobsheet 4 Praktikum 2.6============
+    public function tambah()
+    {
+        return view('level_tambah');
+    }
+
+    public function tambah_simpan(Request $request)
+    {
+        LevelModel::create([
+            'level_kode' => $request->level_kode,
+            'level_nama' => $request->level_nama,
+        ]);
+
+        return redirect('/level');
+    }
+
+    public function ubah($id)
+    {
+        $level = LevelModel::find($id);
+        return view('level_ubah', ['data' => $level]);
+    }
+
+    public function ubah_simpan($id, Request $request)
+    {
+        $level = LevelModel::find($id);
+
+        $level->level_kode = $request->level_kode;
+        $level->level_nama = $request->level_nama;
+
+        $level->save();
+
+        return redirect('/level');
+    }
+
+    public function hapus($id)
+    {
+        $level = LevelModel::find($id);
+        $level->delete();
+
+        return redirect('/level');
     }
 
 }

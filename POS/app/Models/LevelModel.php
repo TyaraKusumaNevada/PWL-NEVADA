@@ -15,7 +15,9 @@ class LevelModel extends Model
 
     protected $fillable = ['level_kode', 'level_nama'];
 
-    public function user(): BelongsTo {
-        return $this->belongsTo(UserModel::class);
+    //========== Jobsheet 4 Praktikum 2.7===============
+
+    public function user(): HasMany {
+        return $this->hasMany(UserModel::class, 'level_id', 'level_id');
     }
 }
