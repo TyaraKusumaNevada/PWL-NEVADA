@@ -116,3 +116,6 @@ Route::post('penjualan-detail/tambah_simpan', [PenjualanDetailController::class,
 Route::get('penjualan-detail/ubah/{id}', [PenjualanDetailController::class, 'ubah']);
 Route::put('penjualan-detail/ubah_simpan/{id}', [PenjualanDetailController::class, 'ubah_simpan']);
 Route::get('penjualan-detail/hapus/{id}', [PenjualanDetailController::class, 'hapus']);
+
+//===========Jobsheet 5==============================
+Route::get('/', [WelcomeController::class, 'index']);
