@@ -6,10 +6,125 @@ use App\Models\BarangModel;
 use App\Models\KategoriModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+
+// ===================Jobsheet 5 Praktikum 3==========
 
 class BarangController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        $breadcrumb = (object) ['title' => 'Data Barang', 'list' => ['Home', 'Barang']];
+        $page = (object) ['title' => 'Daftar Barang'];
+        $activeMenu = 'barang';
+
+        return view('barang.index', compact('breadcrumb', 'page', 'activeMenu'));
+    }
+
+    //Ambil data barang 
+    public function list()
+    {
+    $barang = BarangModel::with('kategori')->select('barang_id', 'kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual');
+
+    return DataTables::of($barang)
+        ->addIndexColumn()
+        ->addColumn('kategori_nama', function ($barang) {
+            return $barang->kategori->kategori_nama ?? '-';
+        })
+        ->addColumn('aksi', function ($barang) {
+            $btn  = '<a href="' . url('/barang/' . $barang->barang_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+            $btn .= '<a href="' . url('/barang/' . $barang->barang_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+            $btn .= '<form class="d-inline-block" method="POST" action="' . url('/barang/' . $barang->barang_id) . '">'
+                  . csrf_field()
+                  . method_field('DELETE')
+                  . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus?\')">Hapus</button>'
+                  . '</form>';
+            return $btn;
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
+
+    //tampilkan form tambah barang 
+    public function create()
+    {
+        $breadcrumb = (object) ['title' => 'Tambah Barang', 'list' => ['Home', 'Barang', 'Tambah']];
+        $page = (object) ['title' => 'Form Tambah Barang'];
+        $activeMenu = 'barang';
+        $kategori = KategoriModel::all();
+
+        return view('barang.create', compact('breadcrumb', 'page', 'activeMenu', 'kategori'));
+    }
+
+    //save data barang baru
+    public function store(Request $request)
+    {
+        $request->validate([
+            'kategori_id'  => 'required|exists:m_kategori,kategori_id',
+            'barang_kode'  => 'required|string|max:10|unique:m_barang,barang_kode',
+            'barang_nama'  => 'required|string|max:100',
+            'harga_beli'   => 'required|integer|min:0',
+            'harga_jual'   => 'required|integer|min:0',
+        ]);
+
+        BarangModel::create($request->only(['kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual']));
+
+        return redirect('/barang')->with('success', 'Data berhasil disimpan');
+    }
+
+    //tampilkan detail barang
+    public function show($id)
+    {
+        $barang = BarangModel::with('kategori')->findOrFail($id);
+
+        $breadcrumb = (object) ['title' => 'Detail Barang', 'list' => ['Home', 'Barang', 'Detail']];
+        $page = (object) ['title' => 'Detail Data Barang'];
+        $activeMenu = 'barang';
+
+        return view('barang.show', compact('breadcrumb', 'page', 'activeMenu', 'barang'));
+    }
+
+    public function edit($id)
+    {
+        $barang = BarangModel::findOrFail($id);
+        $breadcrumb = (object) ['title' => 'Edit Barang', 'list' => ['Home', 'Barang', 'Edit']];
+        $page = (object) ['title' => 'Edit Data Barang'];
+        $activeMenu = 'barang';
+        $kategori = KategoriModel::all();
+
+        return view('barang.edit', compact('breadcrumb', 'page', 'activeMenu', 'barang', 'kategori'));
+    }
+
+    //save edit
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'kategori_id'  => 'required|exists:m_kategori,kategori_id',
+            'barang_kode'  => 'required|string|max:10|unique:m_barang,barang_kode,' . $id . ',barang_id',
+            'barang_nama'  => 'required|string|max:100',
+            'harga_beli'   => 'required|integer|min:0',
+            'harga_jual'   => 'required|integer|min:0',
+        ]);
+
+        BarangModel::findOrFail($id)->update($request->only(['kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual']));
+
+        return redirect('/barang')->with('success', 'Data berhasil diubah');
+    }
+
+    //delete
+    public function destroy($id)
+    {
+        try {
+            BarangModel::destroy($id);
+            return redirect('/barang')->with('success', 'Data berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect('/barang')->with('error', 'Data gagal dihapus: ' . $e->getMessage());
+        }
+    }
+}
+
+
+
         // ===================Jobsheet 3 Praktikum 4==========
         // DB::insert('insert into m_barang(kategori_id, barang_kode, barang_nama, harga_beli, harga_jual, created_at) values(?, ?, ?, ?, ?, ?)', [1, 'MSK-008', 'Kalimba', 180000, 100000, now()]);
         // return 'Insert data baru berhasil';
@@ -76,62 +191,62 @@ class BarangController extends Controller
         // ];
         // BarangModel::create($data);
 
-        $barang = BarangModel::all();
-        return view('barang', ['data' => $barang]);
+//         $barang = BarangModel::all();
+//         return view('barang', ['data' => $barang]);
 
 
         
 
-    }
+//     }
 
-    //===================Jobsheet 4 Praktikum 2.6=============
-    public function tambah()
-    {
-        $kategori = KategoriModel::all();
-        return view('barang_tambah', ['kategori' => $kategori]);
-    }
+//     //===================Jobsheet 4 Praktikum 2.6=============
+//     public function tambah()
+//     {
+//         $kategori = KategoriModel::all();
+//         return view('barang_tambah', ['kategori' => $kategori]);
+//     }
 
-    public function tambah_simpan(Request $request)
-    {
-        BarangModel::create([
-            'kategori_id' => $request->kategori_id,
-            'barang_kode' => $request->barang_kode,
-            'barang_nama' => $request->barang_nama,
-            'harga_beli'  => $request->harga_beli,
-            'harga_jual'  => $request->harga_jual,
-        ]);
+//     public function tambah_simpan(Request $request)
+//     {
+//         BarangModel::create([
+//             'kategori_id' => $request->kategori_id,
+//             'barang_kode' => $request->barang_kode,
+//             'barang_nama' => $request->barang_nama,
+//             'harga_beli'  => $request->harga_beli,
+//             'harga_jual'  => $request->harga_jual,
+//         ]);
 
-        return redirect('/barang');
-    }
+//         return redirect('/barang');
+//     }
 
-    public function ubah($id)
-    {
-        $barang = BarangModel::find($id);
-        $kategoris = KategoriModel::all();
-        return view('barang_ubah', ['data' => $barang, 'kategori' => $kategoris]);
-    }
+//     public function ubah($id)
+//     {
+//         $barang = BarangModel::find($id);
+//         $kategoris = KategoriModel::all();
+//         return view('barang_ubah', ['data' => $barang, 'kategori' => $kategoris]);
+//     }
 
-    public function ubah_simpan($id, Request $request)
-    {
-        $barang = BarangModel::find($id);
+//     public function ubah_simpan($id, Request $request)
+//     {
+//         $barang = BarangModel::find($id);
 
-        $barang->kategori_id = $request->kategori_id;
-        $barang->barang_kode = $request->barang_kode;
-        $barang->barang_nama = $request->barang_nama;
-        $barang->harga_beli  = $request->harga_beli;
-        $barang->harga_jual  = $request->harga_jual;
+//         $barang->kategori_id = $request->kategori_id;
+//         $barang->barang_kode = $request->barang_kode;
+//         $barang->barang_nama = $request->barang_nama;
+//         $barang->harga_beli  = $request->harga_beli;
+//         $barang->harga_jual  = $request->harga_jual;
 
-        $barang->save();
+//         $barang->save();
 
-        return redirect('/barang');
-    }
+//         return redirect('/barang');
+//     }
 
-    public function hapus($id)
-    {
-        $barang = BarangModel::find($id);
-        $barang->delete();
+//     public function hapus($id)
+//     {
+//         $barang = BarangModel::find($id);
+//         $barang->delete();
 
-        return redirect('/barang');
-    }
+//         return redirect('/barang');
+//     }
         
-}
+// }

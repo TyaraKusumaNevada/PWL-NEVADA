@@ -2,14 +2,253 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PenjualanModel;
-use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\UserModel;
+use App\Models\BarangModel;
+use App\Models\PenjualanModel;
+use App\Models\PenjualanDetailModel;
+use App\Models\StokModel;
+use DataTables;
 
-class PenjualanController extends Controller {
+class PenjualanController extends Controller
+{
+    // Menampilkan halaman daftar transaksi penjualan
+    public function index()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Daftar Penjualan',
+            'list'  => ['Home', 'Penjualan']
+        ];
 
-    public function index(){
+        $page = (object) [
+            'title' => 'Daftar Transaksi Penjualan'
+        ];
+
+        $activeMenu = 'penjualan';
+
+        return view('penjualan.index', [
+            'breadcrumb'  => $breadcrumb,
+            'page'        => $page,
+            'activeMenu'  => $activeMenu,
+        ]);
+    }
+
+    // Mengambil data penjualan dalam bentuk JSON untuk DataTables
+    public function list(Request $request)
+    {
+        // Mengambil data dengan relasi user (misalnya untuk menampilkan nama pengguna)
+        $penjualan = PenjualanModel::with('user');
+
+        // Jika ingin menambahkan filter (misalnya berdasarkan user_id), bisa disesuaikan
+        if ($request->user_id) {
+            $penjualan->where('user_id', $request->user_id);
+        }
+
+        return DataTables::of($penjualan)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($row) {
+                $btn  = '<a href="' . url('penjualan/' . $row->penjualan_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                $btn .= '<a href="' . url('penjualan/' . $row->penjualan_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+                $btn .= '<form class="d-inline-block" method="POST" action="' . url('penjualan/' . $row->penjualan_id) . '">';
+                $btn .= csrf_field() . method_field('DELETE');
+                $btn .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';
+                return $btn;
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    // Menampilkan halaman form tambah transaksi penjualan
+    public function create()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Tambah Penjualan',
+            'list'  => ['Home', 'Penjualan', 'Tambah']
+        ];
+
+        $page = (object) [
+            'title' => 'Tambah Transaksi Penjualan'
+        ];
+
+        $activeMenu = 'penjualan';
+
+        // Ambil data user dan barang untuk dipilih melalui dropdown
+        $users   = UserModel::all();       // Pastikan UserModel memiliki field user_id dan username
+        $barang  = BarangModel::all();      // Pastikan BarangModel memiliki field barang_id, nama_barang, dan harga_jual
+
+        return view('penjualan.create', compact('breadcrumb', 'page', 'activeMenu', 'users', 'barang'));
+    }
+
+    // Method store (tetap sama, misalnya seperti contoh sebelumnya)
+    public function store(Request $request)
+    {
+        // Validasi header penjualan dan data detail penjualan
+        $request->validate([
+            'user_id'            => 'required|integer',
+            'pembeli'            => 'required|string',
+            'penjualan_kode'     => 'required|string|unique:t_penjualan,penjualan_kode',
+            'penjualan_tanggal'  => 'required|date',
+            // Validasi array untuk setiap detail penjualan
+            'barang_id.*'        => 'required|integer',
+            'jumlah.*'           => 'required|integer|min:1',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Simpan data header penjualan
+            $penjualan = PenjualanModel::create([
+                'user_id'           => $request->user_id,
+                'pembeli'           => $request->pembeli,
+                'penjualan_kode'    => $request->penjualan_kode,
+                'penjualan_tanggal' => $request->penjualan_tanggal,
+            ]);
+
+            // Simpan data detail penjualan dan update stok per item
+            if ($request->has('barang_id')) {
+                foreach ($request->barang_id as $key => $barang_id) {
+                    // Karena harga akan dihitung otomatis di sisi client, kita ambil nilai yang dikirim di input harga
+                    // atau bisa juga dilakukan perhitungan ulang berdasarkan data harga_jual dari database.
+                    // Di sini diasumsikan nilai harga sudah terhitung dan terkirim
+                    $harga  = $request->harga[$key];
+                    $jumlah = $request->jumlah[$key];
+
+                    // Simpan detail penjualan
+                    PenjualanDetailModel::create([
+                        'penjualan_id' => $penjualan->penjualan_id,
+                        'barang_id'    => $barang_id,
+                        'harga'        => $harga,
+                        'jumlah'       => $jumlah,
+                    ]);
+
+                    // Update stok barang
+                    $stok = StokModel::where('barang_id', $barang_id)->first();
+
+                    if ($stok) {
+                        $stok->stok_jumlah = $stok->stok_jumlah - $jumlah;
+                        $stok->save();
+                    } else {
+                        // Bila stok belum ada, buat record baru dengan nilai negatif
+                        StokModel::create([
+                            'barang_id'    => $barang_id,
+                            'user_id'      => $request->user_id,
+                            'stok_tanggal' => $request->penjualan_tanggal,
+                            'stok_jumlah'  => -$jumlah,
+                            'supplier_id'  => null,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('penjualan.index')
+                ->with('success', 'Transaksi penjualan berhasil disimpan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Gagal menyimpan transaksi penjualan: ' . $e->getMessage());
+        }
+    }
+
+    // Menampilkan halaman detail transaksi penjualan lengkap dengan data detailnya
+    public function show($id)
+    {
+        // Ambil data penjualan beserta relasi detail dan data barang di setiap detail
+        $penjualan = PenjualanModel::with(['user', 'penjualanDetail.barang'])->find($id);
+
+        if (!$penjualan) {
+            return redirect()->route('penjualan.index')
+                ->with('error', 'Data penjualan tidak ditemukan');
+        }
+
+        $breadcrumb = (object) [
+            'title' => 'Detail Penjualan',
+            'list'  => ['Home', 'Penjualan', 'Detail']
+        ];
+
+        $page = (object) [
+            'title' => 'Detail Transaksi Penjualan'
+        ];
+
+        $activeMenu = 'penjualan';
+
+        return view('penjualan.show', [
+            'penjualan'   => $penjualan,
+            'breadcrumb'  => $breadcrumb,
+            'page'        => $page,
+            'activeMenu'  => $activeMenu,
+        ]);
+    }
+
+    
+
+
+
+    // Menampilkan form edit penjualan
+    public function edit($id)
+    {
+        $penjualan = PenjualanModel::find($id);
+        if (!$penjualan) {
+            return redirect('/penjualan')->with('error', 'Data penjualan tidak ditemukan');
+        }
+
+        $breadcrumb = (object) [
+            'title' => 'Edit Penjualan',
+            'list'  => ['Home', 'Penjualan', 'Edit']
+        ];
+
+        $page = (object) [
+            'title' => 'Edit data penjualan'
+        ];
+
+        $users = UserModel::all();
+        $activeMenu = 'penjualan';
+
+        return view('penjualan.edit', compact('breadcrumb', 'page', 'penjualan', 'users', 'activeMenu'));
+    }
+
+    // Menyimpan perubahan penjualan
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'user_id'            => 'required|integer',
+            'pembeli'            => 'required|string|max:100',
+            'penjualan_kode'     => 'required|string|max:20|unique:t_penjualan,penjualan_kode,' . $id . ',penjualan_id',
+            'penjualan_tanggal'  => 'required|date',
+        ]);
+
+        $penjualan = PenjualanModel::find($id);
+        if (!$penjualan) {
+            return redirect('/penjualan')->with('error', 'Data penjualan tidak ditemukan');
+        }
+
+        $penjualan->update($request->all());
+
+        return redirect('/penjualan')->with('success', 'Data penjualan berhasil diubah');
+    }
+
+    // Menghapus penjualan
+    public function destroy($id)
+    {
+        $check = PenjualanModel::find($id);
+        if (!$check) {
+            return redirect('/penjualan')->with('error', 'Data penjualan tidak ditemukan');
+        }
+
+        try {
+            PenjualanModel::destroy($id);
+            return redirect('/penjualan')->with('success', 'Data penjualan berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect('/penjualan')->with('error', 'Data penjualan gagal dihapus karena masih terkait dengan data lain');
+        }
+    }
+}
+
+
+
+
+    // public function index(){
         // ======Jobsheet 3 Praktikum 4========
         // DB::insert('insert into t_penjualan(user_id, pembeli, penjualan_kode, penjualan_tanggal, created_at) values(?, ?, ?, ?, ?)', [3, 'Ayu Widodo', 'TR011', now(), now()]);
         // return 'Insert data baru berhasil';
@@ -73,60 +312,60 @@ class PenjualanController extends Controller {
         // ];
         // PenjualanModel::create($data);
 
-        $penjualan = PenjualanModel::all();
-        return view('penjualan', ['data' => $penjualan]);
-    }
-
-
-    //==================Jobsheet 4 Praktikum 2.6=========
-    public function tambah()
-    {
-        $users = UserModel::all();
-        return view('penjualan_tambah', ['users' => $users]);
-    }
-
-    public function tambah_simpan(Request $request)
-    {
-        PenjualanModel::create([
-            'user_id' => $request->user_id,
-            'pembeli' => $request->pembeli,
-            'penjualan_kode' => $request->penjualan_kode,
-            'penjualan_tanggal' => $request->penjualan_tanggal,
-        ]);
-
-        return redirect('/penjualan');
-    }
-
-    public function ubah($id)
-    {
-        $penjualan = PenjualanModel::find($id);
-        $users = UserModel::all();
-        return view('penjualan_ubah', ['data' => $penjualan, 'users' => $users]);
-    }
-
-    public function ubah_simpan($id, Request $request)
-    {
-        $penjualan = PenjualanModel::find($id);
-
-        $penjualan->user_id = $request->user_id;
-        $penjualan->pembeli = $request->pembeli;
-        $penjualan->penjualan_kode = $request->penjualan_kode;
-        $penjualan->penjualan_tanggal = $request->penjualan_tanggal;
-
-        $penjualan->save();
-
-        return redirect('/penjualan');
-    }
-
-    public function hapus($id)
-    {
-        $penjualan = PenjualanModel::find($id);
-        $penjualan->delete();
-
-        return redirect('/penjualan');
-    }
-
-    // public function penjualan() {
-    //     return view('penjualan');
+    //     $penjualan = PenjualanModel::all();
+    //     return view('penjualan', ['data' => $penjualan]);
     // }
-}
+
+
+    // //==================Jobsheet 4 Praktikum 2.6=========
+    // public function tambah()
+    // {
+    //     $users = UserModel::all();
+    //     return view('penjualan_tambah', ['users' => $users]);
+    // }
+
+    // public function tambah_simpan(Request $request)
+    // {
+    //     PenjualanModel::create([
+    //         'user_id' => $request->user_id,
+    //         'pembeli' => $request->pembeli,
+    //         'penjualan_kode' => $request->penjualan_kode,
+    //         'penjualan_tanggal' => $request->penjualan_tanggal,
+    //     ]);
+
+    //     return redirect('/penjualan');
+    // }
+
+    // public function ubah($id)
+    // {
+    //     $penjualan = PenjualanModel::find($id);
+    //     $users = UserModel::all();
+    //     return view('penjualan_ubah', ['data' => $penjualan, 'users' => $users]);
+    // }
+
+    // public function ubah_simpan($id, Request $request)
+    // {
+    //     $penjualan = PenjualanModel::find($id);
+
+    //     $penjualan->user_id = $request->user_id;
+    //     $penjualan->pembeli = $request->pembeli;
+    //     $penjualan->penjualan_kode = $request->penjualan_kode;
+    //     $penjualan->penjualan_tanggal = $request->penjualan_tanggal;
+
+    //     $penjualan->save();
+
+    //     return redirect('/penjualan');
+    // }
+
+    // public function hapus($id)
+    // {
+    //     $penjualan = PenjualanModel::find($id);
+    //     $penjualan->delete();
+
+    //     return redirect('/penjualan');
+    // }
+
+    // // public function penjualan() {
+    // //     return view('penjualan');
+    // // }
+

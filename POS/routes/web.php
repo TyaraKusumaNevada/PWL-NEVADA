@@ -122,3 +122,16 @@ Route::group(['prefix' => 'supplier'], function () {
     Route::put('/{id}', [SupplierController::class, 'update']);// Menyimpan perubahan data supplier
     Route::delete('/{id}', [SupplierController::class, 'destroy']); // Menghapus data supplier
 });
+
+// route penjualan
+
+Route::group(['prefix' => 'penjualan'], function () {
+    Route::get('/', [PenjualanController::class, 'index']); // Halaman awal penjualan
+    Route::post('/list', [PenjualanController::class, 'list']); // DataTables JSON
+    Route::get('/create', [PenjualanController::class, 'create']); // Form tambah
+    Route::post('/', [PenjualanController::class, 'store']); // Simpan baru
+    Route::get('/{id}', [PenjualanController::class, 'show']); // Detail
+    Route::get('/{id}/edit', [PenjualanController::class, 'edit']); // Form edit
+    Route::put('/{id}', [PenjualanController::class, 'update']); // Update data
+    Route::delete('/{id}', [PenjualanController::class, 'destroy']); // Hapus data
+});
