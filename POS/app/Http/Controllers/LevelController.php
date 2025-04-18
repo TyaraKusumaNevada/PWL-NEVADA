@@ -132,6 +132,7 @@ class LevelController extends Controller
     }
     
 
+
     // Confirm hapus data level AJAX
     public function confirm_ajax(string $id)
     {

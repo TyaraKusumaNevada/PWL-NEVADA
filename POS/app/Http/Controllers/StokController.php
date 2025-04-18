@@ -120,6 +120,37 @@ class StokController extends Controller
         return redirect('/');
     }
 
+    // prak 3 
+    public function confirm_ajax(string $id)
+  {
+    $stok = stokModel::find($id);
+
+    return view('stok.confirm_ajax', compact('stok'));
+  }
+
+  // Hapus data stok via AJAX
+  public function delete_ajax(Request $request, string $id)
+  {
+    if ($request->ajax() || $request->wantsJson()) {
+      $stok = stokModel::find($id);
+      if ($stok) {
+        $stok->delete();
+
+        return response()->json([
+          'status' => true,
+          'message' => 'Data stok berhasil dihapus'
+        ]);
+      } else {
+        return response()->json([
+          'status' => false,
+          'message' => 'Data stok tidak ditemukan'
+        ]);
+      }
+    }
+
+    return redirect('/');
+  }
+
 
     
     //    ============== Implementasi js 5 prak 3 & 4==========================

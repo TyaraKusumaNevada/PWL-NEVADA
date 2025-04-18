@@ -96,6 +96,7 @@ class KategoriController extends Controller
          return redirect('/');
      }
 
+
     // Tampilkan konfirmasi hapus AJAX
     public function confirm_ajax(string $id)
     {

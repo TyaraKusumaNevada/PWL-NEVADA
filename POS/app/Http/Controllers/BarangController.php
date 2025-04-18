@@ -108,35 +108,36 @@ class BarangController extends Controller
               return redirect('/');
           }
  
-     // Konfirmasi hapus
-     public function confirm_ajax(string $id)
-     {
-         $barang = BarangModel::find($id);
-         return view('barang.confirm_ajax', ['barang' => $barang]);
-     }
- 
-     // Hapus data barang
-     public function delete_ajax(Request $request, $id)
-     {
-         if ($request->ajax() || $request->wantsJson()) {
-             $barang = BarangModel::find($id);
-             if ($barang) {
-                 $barang->delete();
- 
-                 return response()->json([
-                     'status'  => true,
-                     'message' => 'Data barang berhasil dihapus.',
-                 ]);
-             }
- 
-             return response()->json([
-                 'status'  => false,
-                 'message' => 'Data tidak ditemukan.',
-             ]);
-         }
- 
-         return redirect('/');
-    }
+
+   // Konfirmasi hapus
+   public function confirm_ajax(string $id)
+   {
+       $barang = BarangModel::find($id);
+       return view('barang.confirm_ajax', ['barang' => $barang]);
+   }
+
+   // Hapus data barang
+   public function delete_ajax(Request $request, $id)
+   {
+       if ($request->ajax() || $request->wantsJson()) {
+           $barang = BarangModel::find($id);
+           if ($barang) {
+               $barang->delete();
+
+               return response()->json([
+                   'status'  => true,
+                   'message' => 'Data barang berhasil dihapus.',
+               ]);
+           }
+
+           return response()->json([
+               'status'  => false,
+               'message' => 'Data tidak ditemukan.',
+           ]);
+       }
+
+       return redirect('/');
+  }
  
     public function index()
     {

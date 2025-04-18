@@ -113,6 +113,7 @@ class SupplierController extends Controller{
         return redirect('/');
     }
 
+
     // Menampilkan Konfirmasi hapus data supplier AJAX
     public function confirm_ajax(string $id)
     {
