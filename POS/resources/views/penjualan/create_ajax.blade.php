@@ -4,31 +4,36 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tambah Penjualan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-
             <div class="modal-body">
                 {{-- Header Penjualan --}}
                 <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label>Petugas</label>
-                        <select name="user_id" id="user_id" class="form-control" required>
-                            <option value="">- Pilih Petugas -</option>
-                            @foreach($user as $u)
-                                <option value="{{ $u->user_id }}">{{ $u->username }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Pembeli</label>
-                        <input type="text" name="pembeli" id="pembeli" class="form-control" required>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label>Tanggal Penjualan</label>
-                        <input type="date" name="penjualan_tanggal" id="penjualan_tanggal" class="form-control" required>
-                    </div>
-                </div>
+            <div class="form-group col-md-3">
+                <label>Petugas</label>
+                <select name="user_id" id="user_id" class="form-control" required>
+                    <option value="">- Pilih Petugas -</option>
+                    @foreach($user as $user)
+                        <option value="{{ $user->user_id }}">{{ $user->username }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Pembeli</label>
+                <input type="text" name="pembeli" id="pembeli" class="form-control" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Kode Penjualan</label>
+                <input type="text" name="penjualan_kode" id="penjualan_kode" class="form-control" required maxlength="20">
+            </div>
+            <div class="form-group col-md-3">
+                <label>Tanggal Penjualan</label>
+                <input type="date" name="penjualan_tanggal" id="penjualan_tanggal" class="form-control" required>
+            </div>
+        </div>
+
 
                 {{-- Detail Penjualan --}}
                 <hr>
@@ -48,15 +53,15 @@
                                 <select name="barang_id[]" class="form-control" required>
                                     <option value="">- Pilih Barang -</option>
                                     @foreach($barang as $b)
-                                        <option value="{{ $b->barang_id }}">{{ $b->barang_nama }}</option>
+                                        <option value="{{ $b->barang_id }}" data-harga="{{ $b->harga_jual }}">{{ $b->barang_nama }}</option>
                                     @endforeach
                                 </select>
                             </td>
                             <td>
-                                <input type="number" name="harga[]" class="form-control" min="1" required>
+                                <input type="number" name="harga[]" class="form-control" min="1" readonly required>
                             </td>
                             <td>
-                                <input type="number" name="jumlah[]" class="form-control" min="1" required>
+                                <input type="number" name="jumlah[]" class="form-control" min="1" value="1" required>
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-danger btn-remove-row">&times;</button>
@@ -77,16 +82,35 @@
 
 <script>
 $(document).ready(function() {
-    // Tambah / Hapus baris detail
+    // Fungsi hitung harga per baris
+    function recalcRow(row) {
+        const hargaJual = parseFloat(row.find('select[name="barang_id[]"] option:selected').data('harga')) || 0;
+        const jumlah   = parseInt(row.find('input[name="jumlah[]"]').val()) || 0;
+        row.find('input[name="harga[]"]').val(hargaJual * jumlah);
+    }
+
+    // Tambah baris detail
     $('#btn-add-row').click(function() {
         let row = $('#table-detail tbody tr:first').clone();
-        row.find('select, input').val('');
+        row.find('select').val('');
+        row.find('input[name="jumlah[]"]').val(1);
+        row.find('input[name="harga[]"]').val('');
         $('#table-detail tbody').append(row);
     });
+
+    // Hapus baris
     $('#table-detail').on('click', '.btn-remove-row', function() {
         if ($('#table-detail tbody tr').length > 1) {
             $(this).closest('tr').remove();
         }
+    });
+
+    // Recalculate on change
+    $('#table-detail').on('change', 'select[name="barang_id[]"]', function() {
+        recalcRow($(this).closest('tr'));
+    });
+    $('#table-detail').on('input', 'input[name="jumlah[]"]', function() {
+        recalcRow($(this).closest('tr'));
     });
 
     // Validasi & AJAX submit
@@ -122,8 +146,12 @@ $(document).ready(function() {
                     }
                 },
                 error: function(xhr) {
-                    Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan server.' });
-                }
+  let msg = 'Terjadi kesalahan server.';
+  if (xhr.responseJSON && xhr.responseJSON.message) {
+    msg = xhr.responseJSON.message;
+  }
+  Swal.fire({ icon: 'error', title: 'Error', text: msg });
+}
             });
             return false;
         }
