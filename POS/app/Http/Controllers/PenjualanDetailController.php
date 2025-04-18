@@ -8,9 +8,135 @@ use App\Models\PenjualanDetailModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
+
 
 class PenjualanDetailController extends Controller
 {
+
+  public function create_ajax($penjualan_id)
+    {
+        $barang = BarangModel::select('barang_id', 'barang_nama')->get();
+        return view('penjualan.detail.create_ajax', compact('penjualan_id', 'barang'));
+    }
+
+    /**
+     * Simpan satu baris detail baru via AJAX.
+     */
+    public function store_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'penjualan_id' => 'required|integer|exists:t_penjualan,penjualan_id',
+                'barang_id'    => 'required|integer|exists:m_barang,barang_id',
+                'harga'        => 'required|numeric|min:1',
+                'jumlah'       => 'required|integer|min:1',
+            ];
+            $v = Validator::make($request->all(), $rules);
+            if ($v->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi gagal.',
+                    'msgField' => $v->errors(),
+                ]);
+            }
+
+            $detail = PenjualanDetailModel::create($request->only([
+                'penjualan_id', 'barang_id', 'harga', 'jumlah'
+            ]));
+
+            // Kirim kembali data detail (bisa untuk append baris di table)
+            return response()->json([
+                'status' => true,
+                'message' => 'Detail berhasil ditambahkan.',
+                'data' => $detail->load('barang')
+            ]);
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Tampilkan form edit satu baris detail (modal AJAX).
+     */
+    public function edit_ajax($id)
+    {
+        $detail  = PenjualanDetailModel::findOrFail($id);
+        $barang  = BarangModel::select('barang_id', 'barang_nama')->get();
+
+        return view('penjualan.detail.edit_ajax', compact('detail', 'barang'));
+    }
+
+    /**
+     * Update satu baris detail via AJAX.
+     */
+    public function update_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'barang_id' => 'required|integer|exists:m_barang,barang_id',
+                'harga'     => 'required|numeric|min:1',
+                'jumlah'    => 'required|integer|min:1',
+            ];
+            $v = Validator::make($request->all(), $rules);
+            if ($v->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi gagal.',
+                    'msgField' => $v->errors(),
+                ]);
+            }
+
+            $detail = PenjualanDetailModel::find($id);
+            if (! $detail) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Detail tidak ditemukan.',
+                ]);
+            }
+
+            $detail->update($request->only(['barang_id','harga','jumlah']));
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Detail berhasil diupdate.',
+                'data'    => $detail->load('barang'),
+            ]);
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Tampilkan modal konfirmasi hapus detail.
+     */
+    public function confirm_ajax($id)
+    {
+        $detail = PenjualanDetailModel::with('barang')->findOrFail($id);
+        return view('penjualan.detail.confirm_ajax', compact('detail'));
+    }
+
+    /**
+     * Hapus satu baris detail via AJAX.
+     */
+    public function delete_ajax($id)
+    {
+        if (request()->ajax() || request()->wantsJson()) {
+            $detail = PenjualanDetailModel::find($id);
+            if (! $detail) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Detail tidak ditemukan.',
+                ]);
+            }
+
+            $detail->delete();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Detail berhasil dihapus.',
+            ]);
+        }
+        return redirect()->back();
+    }
 
   //============ Jobsheet 5 - tugas ===============
   public function index($penjualan_id)

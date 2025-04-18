@@ -10,9 +10,180 @@ use App\Models\PenjualanModel;
 use App\Models\PenjualanDetailModel;
 use App\Models\StokModel;
 use DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class PenjualanController extends Controller
 {
+
+    public function create_ajax()
+    {
+        $user   = UserModel::select('user_id', 'username')->get();
+        $barang = BarangModel::select('barang_id', 'barang_nama')->get();
+
+        return view('penjualan.create_ajax', compact('user', 'barang'));
+    }
+
+    // Simpan data penjualan beserta detail
+    public function store_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            // Validasi input header + array detail
+            $rules = [
+                'user_id'               => 'required|integer|exists:m_user,user_id',
+                'pembeli'               => 'required|string|min:3',
+                'penjualan_tanggal'     => 'required|date',
+                'barang_id.*'           => 'required|integer|exists:m_barang,barang_id',
+                'harga.*'               => 'required|numeric|min:1',
+                'jumlah.*'              => 'required|integer|min:1',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi gagal.',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+
+            // Transaksi DB: simpan header + detail
+            DB::transaction(function() use ($request, &$penjualan) {
+                // Generate kode (misal timestamp + random)
+                $kode = 'PJ' . now()->format('YmdHis');
+
+                $penjualan = PenjualanModel::create([
+                    'user_id'            => $request->user_id,
+                    'pembeli'            => $request->pembeli,
+                    'penjualan_kode'     => $kode,
+                    'penjualan_tanggal'  => $request->penjualan_tanggal,
+                ]);
+
+                // Simpan detail
+                foreach ($request->barang_id as $i => $barangId) {
+                    PenjualanDetailModel::create([
+                        'penjualan_id' => $penjualan->penjualan_id,
+                        'barang_id'    => $barangId,
+                        'harga'        => $request->harga[$i],
+                        'jumlah'       => $request->jumlah[$i],
+                    ]);
+                }
+            });
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Penjualan berhasil disimpan.',
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    // Tampilkan form edit (modal AJAX)
+    public function edit_ajax(string $id)
+    {
+        $penjualan = PenjualanModel::with('penjualanDetail')->findOrFail($id);
+        $user      = UserModel::select('user_id', 'username')->get();
+        $barang    = BarangModel::select('barang_id', 'barang_nama')->get();
+
+        return view('penjualan.edit_ajax', compact('penjualan', 'user', 'barang'));
+    }
+
+    // Update header + detail
+    public function update_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'user_id'               => 'required|integer|exists:m_user,user_id',
+                'pembeli'               => 'required|string|min:3',
+                'penjualan_tanggal'     => 'required|date',
+                'barang_id.*'           => 'required|integer|exists:m_barang,barang_id',
+                'harga.*'               => 'required|numeric|min:1',
+                'jumlah.*'              => 'required|integer|min:1',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'   => false,
+                    'message'  => 'Validasi gagal.',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+
+            $penjualan = PenjualanModel::find($id);
+            if (! $penjualan) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Data penjualan tidak ditemukan.',
+                ]);
+            }
+
+            DB::transaction(function() use ($request, $penjualan) {
+                // Update header
+                $penjualan->update([
+                    'user_id'           => $request->user_id,
+                    'pembeli'           => $request->pembeli,
+                    'penjualan_tanggal' => $request->penjualan_tanggal,
+                ]);
+
+                // Hapus detail lama
+                PenjualanDetailModel::where('penjualan_id', $penjualan->penjualan_id)->delete();
+
+                // Simpan detail baru
+                foreach ($request->barang_id as $i => $barangId) {
+                    PenjualanDetailModel::create([
+                        'penjualan_id' => $penjualan->penjualan_id,
+                        'barang_id'    => $barangId,
+                        'harga'        => $request->harga[$i],
+                        'jumlah'       => $request->jumlah[$i],
+                    ]);
+                }
+            });
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Penjualan berhasil diupdate.',
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    // Tampilkan modal konfirmasi hapus
+    public function confirm_ajax(string $id)
+    {
+        $penjualan = PenjualanModel::with('penjualanDetail')->findOrFail($id);
+        return view('penjualan.confirm_ajax', compact('penjualan'));
+    }
+
+    // Hapus header + detail
+    public function delete_ajax(string $id)
+    {
+        if (request()->ajax() || request()->wantsJson()) {
+            $penjualan = PenjualanModel::find($id);
+            if (! $penjualan) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Data tidak ditemukan.',
+                ]);
+            }
+
+            DB::transaction(function() use ($penjualan) {
+                // Hapus detail dulu
+                PenjualanDetailModel::where('penjualan_id', $penjualan->penjualan_id)->delete();
+                // Hapus header
+                $penjualan->delete();
+            });
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Penjualan berhasil dihapus.',
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
     // Menampilkan halaman daftar transaksi penjualan
     public function index()
     {
@@ -27,11 +198,14 @@ class PenjualanController extends Controller
 
         $activeMenu = 'penjualan';
 
-        return view('penjualan.index', [
-            'breadcrumb'  => $breadcrumb,
-            'page'        => $page,
-            'activeMenu'  => $activeMenu,
-        ]);
+        
+        $user    = UserModel::select('user_id','username')->get();
+        $barang = BarangModel::all();
+
+        
+        return view('penjualan.index', compact(
+            'breadcrumb', 'page', 'activeMenu', 'user', 'barang'
+        ));
     }
 
     // Mengambil data penjualan dalam bentuk JSON untuk DataTables
