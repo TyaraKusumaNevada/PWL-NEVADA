@@ -79,6 +79,7 @@ class UserController extends Controller {
         ->make(true);
     }
 
+
      //js 6 prak 2
     // Menampilkan halaman form edit user ajax
     public function edit_ajax(string $id){

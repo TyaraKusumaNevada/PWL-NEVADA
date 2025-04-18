@@ -85,6 +85,7 @@ class LevelController extends Controller
         
     }   
 
+
     // Menampilkan halaman edit level (AJAX)
     public function edit_ajax(string $id)
     {

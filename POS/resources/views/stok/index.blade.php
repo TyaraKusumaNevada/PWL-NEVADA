@@ -45,10 +45,10 @@
           <tr>
             <th>ID</th>
             <th>Barang</th>
-            <th>Jumlah Stok</th>
+            <th>User</th>
             <th>Supplier</th>
             <th>Tanggal</th>
-            <th>Pengguna</th>
+            <th>Jumlah Stok</th>
             <th>Aksi</th>
           </tr>
         </thead>

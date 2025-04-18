@@ -54,58 +54,59 @@ class BarangController extends Controller
          return redirect('/');
      }
  
-     // TAmpilkan Form edit data barang AJAX
-     public function edit_ajax(string $id)
-     {
-         $barang = BarangModel::find($id);
-         $kategori = KategoriModel::select('kategori_id', 'kategori_nama')->get();
- 
-         return view('barang.edit_ajax', [
-             'barang'   => $barang,
-             'kategori' => $kategori,
-         ]);
-     }
- 
-     // Update data barang
-     public function update_ajax(Request $request, $id)
-     {
-         if ($request->ajax() || $request->wantsJson()) {
-             $rules = [
-                 'kategori_id'  => 'required|integer|exists:m_kategori,kategori_id',
-                 'barang_kode'  => 'required|string|unique:m_barang,barang_kode,' . $id . ',barang_id',
-                 'barang_nama'  => 'required|string|max:100',
-                 'harga_beli'   => 'required|numeric|min:0',
-                 'harga_jual'   => 'required|numeric|min:0',
-             ];
- 
-             $validator = Validator::make($request->all(), $rules);
- 
-             if ($validator->fails()) {
-                 return response()->json([
-                     'status'   => false,
-                     'message'  => 'Validasi gagal.',
-                     'msgField' => $validator->errors(),
-                 ]);
-             }
- 
-             $barang = BarangModel::find($id);
-             if ($barang) {
-                 $barang->update($request->all());
- 
-                 return response()->json([
-                     'status'  => true,
-                     'message' => 'Data barang berhasil diupdate.',
-                 ]);
-             }
- 
-             return response()->json([
-                 'status'  => false,
-                 'message' => 'Data tidak ditemukan.',
-             ]);
-         }
- 
-         return redirect('/');
-     }
+
+          // TAmpilkan Form edit data barang AJAX
+          public function edit_ajax(string $id)
+          {
+              $barang = BarangModel::find($id);
+              $kategori = KategoriModel::select('kategori_id', 'kategori_nama')->get();
+      
+              return view('barang.edit_ajax', [
+                  'barang'   => $barang,
+                  'kategori' => $kategori,
+              ]);
+          }
+      
+          // Update data barang
+          public function update_ajax(Request $request, $id)
+          {
+              if ($request->ajax() || $request->wantsJson()) {
+                  $rules = [
+                      'kategori_id'  => 'required|integer|exists:m_kategori,kategori_id',
+                      'barang_kode'  => 'required|string|unique:m_barang,barang_kode,' . $id . ',barang_id',
+                      'barang_nama'  => 'required|string|max:100',
+                      'harga_beli'   => 'required|numeric|min:0',
+                      'harga_jual'   => 'required|numeric|min:0',
+                  ];
+      
+                  $validator = Validator::make($request->all(), $rules);
+      
+                  if ($validator->fails()) {
+                      return response()->json([
+                          'status'   => false,
+                          'message'  => 'Validasi gagal.',
+                          'msgField' => $validator->errors(),
+                      ]);
+                  }
+      
+                  $barang = BarangModel::find($id);
+                  if ($barang) {
+                      $barang->update($request->all());
+      
+                      return response()->json([
+                          'status'  => true,
+                          'message' => 'Data barang berhasil diupdate.',
+                      ]);
+                  }
+      
+                  return response()->json([
+                      'status'  => false,
+                      'message' => 'Data tidak ditemukan.',
+                  ]);
+              }
+      
+              return redirect('/');
+          }
  
      // Konfirmasi hapus
      public function confirm_ajax(string $id)

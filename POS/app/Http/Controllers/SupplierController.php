@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
+
 class SupplierController extends Controller{
 
     public function index()
@@ -65,6 +66,8 @@ class SupplierController extends Controller{
         return redirect('/');
     }
 
+
+   
     // Menampikan form edit data supplier AJAX
     public function edit_ajax(string $id)
     {
@@ -117,7 +120,7 @@ class SupplierController extends Controller{
         return view('supplier.confirm_ajax', ['supplier' => $supplier]);
     }
 
-    // Hapus data supplier
+     // Hapus data supplier
     public function delete_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
@@ -138,23 +141,32 @@ class SupplierController extends Controller{
         return redirect('/');
     }
 
+   
     public function list()
     {
+        // Ambil data supplier dalam bentuk json untuk datatables
+   
         $supplier = SupplierModel::all();
 
         return DataTables::of($supplier)
             ->addIndexColumn()
             ->addColumn('aksi', function ($s) {
-                return '<a href="' . url('/supplier/' . $s->supplier_id) . '" class="btn btn-info btn-sm">Detail</a> '
-                    . '<a href="' . url('/supplier/' . $s->supplier_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> '
-                    . '<form class="d-inline-block" method="POST" action="' . url('/supplier/' . $s->supplier_id) . '">'
-                    . csrf_field()
-                    . method_field('DELETE')
-                    . '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus data ini?\');">Hapus</button>'
-                    . '</form>';
+                // $btn  = '<a href="' . url('/supplier/' . $s->supplier_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                // $btn .= '<a href="' . url('/supplier/' . $s->supplier_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+                // $btn .= '<form class="d-inline-block" method="POST" action="' . url('/supplier/' . $s->supplier_id) . '">' .
+                //     csrf_field() .
+                //     method_field('DELETE') .
+                //     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus data ini?\');">Hapus</button>' .
+                //     '</form>';
+                // return $btn;
+            $btn  = '<button onclick="modalAction(\'' . url('/supplier/' . $s->supplier_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $s->supplier_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $s->supplier_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            return $btn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
+    
     }
 
     public function create()
