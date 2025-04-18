@@ -174,8 +174,8 @@ class StokController extends Controller
 
     }
 
-      public function list(Request $request)
-  {
+    public function list(Request $request)
+    {
     $stok = StokModel::with(['barang', 'user', 'supplier']);
     if ($request->barang_id) {
       $stok->where('barang_id', $request->barang_id);
@@ -192,7 +192,13 @@ class StokController extends Controller
       })
       ->rawColumns(['aksi'])
       ->make(true);
-  }
+    }
+
+    public function show_ajax($id)
+    {
+        $stok = StokModel::with(['barang', 'user', 'supplier'])->find($id);
+        return view('stok.show_ajax', compact('stok'));
+    }
 
     public function create()
     {

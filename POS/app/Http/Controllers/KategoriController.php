@@ -152,6 +152,14 @@ class KategoriController extends Controller
         ->rawColumns(['aksi'])
         ->make(true);
     }
+
+    // implementasi show ajax
+    public function show_ajax($id)
+    {
+        $kategori = KategoriModel::find($id);
+        return view('kategori.show_ajax', compact('kategori'));
+    }
+
     public function index()
     {
         $breadcrumb = (object) ['title' => 'Data Kategori', 'list' => ['Home', 'Kategori']];

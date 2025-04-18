@@ -170,6 +170,14 @@ class SupplierController extends Controller{
     
     }
 
+    // implementasi show ajax
+    public function show_ajax($id)
+    {
+        $supplier = SupplierModel::find($id);
+        return view('supplier.show_ajax', compact('supplier'));
+    }
+
+
     public function create()
     {
         $breadcrumb = (object) [

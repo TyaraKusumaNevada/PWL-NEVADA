@@ -85,6 +85,14 @@ class LevelController extends Controller
         
     }   
 
+    // impementasi show ajax
+
+    public function show_ajax($id)
+    {
+        $level = LevelModel::find($id);
+        return view('level.show_ajax', compact('level'));
+    }
+
 
     // Menampilkan halaman edit level (AJAX)
     public function edit_ajax(string $id)

@@ -50,6 +50,15 @@ class UserController extends Controller {
         redirect('/');
     }
 
+    // Tambahan Detail
+    public function show_ajax($id)
+    {
+        $user = UserModel::with('level')->findOrFail($id);
+
+        return view('user.show_ajax', compact('user'));
+    }
+
+
     public function list(Request $request)
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')->with('level');

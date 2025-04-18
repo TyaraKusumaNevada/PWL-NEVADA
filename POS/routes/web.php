@@ -67,6 +67,8 @@ Route::group(['prefix' => 'user'], function () {
     //js 6 prak 3
     Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']); // Untuk tampilkan form confirm delete user Ajax  
     Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']); // Untuk hapus data user Ajax  
+    // implementasi show_ajax
+    Route::get('/{id}/show_ajax', [UserController::class, 'show_ajax']);
     Route::get('/{id}', [UserController::class, 'show']); // menampilkan detail user
     Route::get('/{id}/edit', [UserController::class, 'edit']); // menampilkan halaman form edit user
     Route::put('/{id}', [UserController::class, 'update']); // menyimpan perubahan data user
@@ -88,6 +90,9 @@ Route::group(['prefix' => 'level'], function () {
     //js 6 tugas
     Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [LevelController::class, 'show_ajax']);
+
     Route::get('/{id}', [LevelController::class, 'show']); // Menampilkan detail level
     Route::get('/{id}/edit', [LevelController::class, 'edit']); // Menampilkan halaman form edit level
     Route::put('/{id}', [LevelController::class, 'update']); // Menyimpan perubahan data level
@@ -109,6 +114,9 @@ Route::group(['prefix' => 'kategori'], function () {
     //js 6 tugas
     Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [KategoriController::class, 'show_ajax']);
+
     Route::get('/{id}', [KategoriController::class, 'show']); // menampilkan detail kategori
     Route::get('/{id}/edit', [KategoriController::class, 'edit']); // menampilkan halaman form edit kategori
     Route::put('/{id}', [KategoriController::class, 'update']);// menyimpan perubahan data kategori
@@ -130,6 +138,9 @@ Route::group(['prefix' => 'stok'], function () {
     //js 6 
     Route::get('/{id}/delete_ajax', [StokController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [StokController::class, 'show_ajax']);
+
     Route::get('/{id}', [StokController::class, 'show']); // menampilkan detail stok
     Route::get('/{id}/edit', [StokController::class, 'edit']); // menampilkan halaman form edit stok
     Route::put('/{id}', [StokController::class, 'update']); // menyimpan perubahan data stok
@@ -151,7 +162,9 @@ Route::group(['prefix' => 'barang'], function () {
     //js 6 tugas
     Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
-    
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [BarangController::class, 'show_ajax']);
+
     Route::get('/{id}', [BarangController::class, 'show']); // menampilkan detail barang
     Route::get('/{id}/edit', [BarangController::class, 'edit']); // menampilkan halaman form edit barang
     Route::put('/{id}', [BarangController::class, 'update']);  // menyimpan perubahan data barang
@@ -173,6 +186,9 @@ Route::group(['prefix' => 'supplier'], function () {
     // js 6 tugas
     Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
     Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [SupplierController::class, 'show_ajax']);
+
     Route::get('/{id}', [SupplierController::class, 'show']); // Menampilkan detail supplier
     Route::get('/{id}/edit', [SupplierController::class, 'edit']); // Menampilkan halaman form edit supplier
     Route::put('/{id}', [SupplierController::class, 'update']);// Menyimpan perubahan data supplier
@@ -194,7 +210,10 @@ Route::group(['prefix' => 'penjualan'], function () {
     Route::put('/{id}/update_ajax', [PenjualanController::class, 'update_ajax']);
     // js 6 tugas
     Route::get('/{id}/delete_ajax', [PenjualanController::class, 'confirm_ajax']);
-    Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
+    // Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
+    // implementasi show ajax
+    Route::get('/{id}/show_ajax', [PenjualanController::class, 'show_ajax']);
+
     Route::get('/{id}', [PenjualanController::class, 'show']); // Detail
     Route::get('/{id}/edit', [PenjualanController::class, 'edit']); // Form edit
     Route::put('/{id}', [PenjualanController::class, 'update']); // Update data
