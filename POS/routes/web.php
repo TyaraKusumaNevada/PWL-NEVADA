@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [UserController::class, 'destroy']); // menghapus data user
             Route::get('/import', [UserController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [UserController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [UserController::class, 'export_excel']); 
         });
     });
 
@@ -114,6 +115,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [LevelController::class, 'destroy']); // Menghapus data level
             Route::get('/import', [LevelController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [LevelController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [LevelController::class, 'export_excel']); 
         });
     });
 
@@ -142,6 +144,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [KategoriController::class, 'destroy']);// menghapus data kategori
             Route::get('/import', [KategoriController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [KategoriController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [KategoriController::class, 'export_excel']);
 
         });
     });
@@ -197,6 +200,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [BarangController::class, 'destroy']); // menghapus data barang
             Route::get('/import', [BarangController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [BarangController::class, 'export_excel']);
         });
     });
 
@@ -225,6 +229,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [SupplierController::class, 'destroy']); // Menghapus data supplier
             Route::get('/import', [SupplierController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [SupplierController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [SupplierController::class, 'export_excel']);
         });  
     });
 
