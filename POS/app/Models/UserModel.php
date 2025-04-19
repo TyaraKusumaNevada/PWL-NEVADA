@@ -11,13 +11,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable; // implementasi class Au
 class UserModel extends Authenticatable
 {
     use HasFactory;
-
     protected $table = 'm_user'; //Mendefinisikan nama tabel yang digunakan di model ini
     protected $primaryKey = 'user_id'; //Mendefinisikan primary key dari tabel yang digunakan
 
     //=======Jaobsheet 4 Prak 1=======
 
-   protected $fillable = ['username', 'nama', 'password', 'level_id'];
+    protected $fillable = ['username', 'nama', 'password', 'level_id'];
+
+    protected $hidden = ['password']; // jangan di tampilkan saat select
+
+    protected $casts = ['password' => 'hashed']; // casting password agar otomatis di hash
+
 
 //    ===Jobsheet 4 Prakt 2.7====
    
@@ -33,4 +37,27 @@ class UserModel extends Authenticatable
    public function penjualan(): HasMany {
        return $this->hasMany(PenjualanModel::class, 'user_id', 'user_id');
    }
+
+    /**
+     * Mendapatkan nama role
+     */
+    public function getRoleName(): string
+    {
+        return $this->level->level_nama;
+    }
+
+    /**
+     * Cek apakah user memiliki role tertentu
+     */
+    public function hasRole($role): bool
+    {
+        return $this->level->level_kode == $role;
+    }
+
+    // mendapat kode role
+    public function getRole()
+    {
+        return $this->level->level_kode;
+    }
+
 }
