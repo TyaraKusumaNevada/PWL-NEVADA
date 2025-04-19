@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 // ===================Jobsheet 5 Praktikum 3==========
@@ -366,7 +367,7 @@ class BarangController extends Controller
             $sheet->setCellValue('C' . $baris, $value->barang_nama);
             $sheet->setCellValue('D' . $baris, $value->harga_jual);
             $sheet->setCellValue('E' . $baris, $value->harga_beli);
-            $sheet->setCellValue('F' . $baris, $value->kategori->nama_kategori); //ambil nama kategori
+            $sheet->setCellValue('F' . $baris, $value->kategori->kategori_nama); //ambil nama kategori
             $no++;
             $baris++;
         }
@@ -390,6 +391,28 @@ class BarangController extends Controller
 
         $writer->save('php://output'); //simpan file ke output
         exit; 
+    }
+
+    public function export_pdf(){
+        $barang = BarangModel::select(
+            'kategori_id',
+            'barang_kode',
+            'barang_nama',
+            'harga_jual',
+            'harga_beli'
+        )
+        ->orderBy('kategori_id')
+        ->orderBy('barang_kode')
+        ->with('kategori')
+        ->get();
+
+        
+        $pdf = PDF::loadView('barang.export_pdf', ['barang' => $barang]);
+        $pdf->setPaper('A4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); // set true jika ada gambar dari url
+        $pdf->render(); // render pdf
+
+        return $pdf->stream('Data Barang '.date('Y-m-d H-i-s').'.pdf');
     }
 
 }
