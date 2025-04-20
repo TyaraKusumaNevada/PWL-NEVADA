@@ -175,6 +175,8 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::get('/{id}/edit', [StokController::class, 'edit']); // menampilkan halaman form edit stok
             Route::put('/{id}', [StokController::class, 'update']); // menyimpan perubahan data stok
             Route::delete('/{id}', [StokController::class, 'destroy']); // menghapus data stok
+            Route::get('/import', [StokController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [StokController::class, 'import_ajax']); // ajax import excel
         });
     });
 
@@ -253,7 +255,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::put('/{id}/update_ajax', [PenjualanController::class, 'update_ajax']);
             // js 6 tugas
             Route::get('/{id}/delete_ajax', [PenjualanController::class, 'confirm_ajax']);
-            // Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
+            Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
             // implementasi show ajax
             Route::get('/{id}/show_ajax', [PenjualanController::class, 'show_ajax']);
 
@@ -261,6 +263,8 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::get('/{id}/edit', [PenjualanController::class, 'edit']); // Form edit
             Route::put('/{id}', [PenjualanController::class, 'update']); // Update data
             Route::delete('/{id}', [PenjualanController::class, 'destroy']); // Hapus data
+            Route::get('/import', [PenjualanController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [PenjualanController::class, 'import_ajax']); // ajax import excel
         });
     });
 

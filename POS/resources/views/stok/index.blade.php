@@ -5,7 +5,8 @@
       <h3 class="card-title">Manajemen Stok</h3>
       <div class="card-tools d-flex gap-2">
         {{-- Tombol Tambah Stok --}}
-        <a class="btn btn-sm btn-primary" href="{{ url('stok/create') }}">Tambah Stok</a>
+        <button onclick="modalAction('{{ url('/stok/import') }}')" class="btn btn-sm btn-info">Import Stok</button> 
+        <a class="btn btn-primary" href="{{ url('stok/create') }}">Tambah Stok</a>
         <button onclick="modalAction('{{ url('/stok/create_ajax') }}')" class="btn btn-success">Tambah Ajax</button>
       </div>
     </div>

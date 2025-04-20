@@ -11,6 +11,7 @@ use App\Models\PenjualanDetailModel;
 use App\Models\StokModel;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class PenjualanController extends Controller
 {
@@ -361,6 +362,109 @@ class PenjualanController extends Controller
             return redirect('/penjualan')->with('error', 'Data penjualan gagal dihapus karena masih terkait dengan data lain');
         }
     }
+
+    public function import()
+    {
+        return view('penjualan.import');
+    }
+
+    public function import_ajax(Request $request)
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            'file_penjualan' => ['required', 'mimes:xlsx', 'max:1024']
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            $file = $request->file('file_penjualan');
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+
+            $grouped = [];
+
+            foreach ($data as $i => $row) {
+                if ($i <= 1) continue; // Skip header
+
+                $kode = $row['C'];
+
+                // Group baris berdasarkan penjualan_kode
+                if (!isset($grouped[$kode])) {
+                    $grouped[$kode] = [
+                        'header' => [
+                            'user_id' => $row['A'],
+                            'pembeli' => $row['B'],
+                            'penjualan_kode' => $row['C'],
+                            'penjualan_tanggal' => $row['D'],
+                        ],
+                        'details' => []
+                    ];
+                }
+
+                $grouped[$kode]['details'][] = [
+                    'barang_id' => $row['E'],
+                    'harga'     => $row['F'],
+                    'jumlah'    => $row['G'],
+                ];
+            }
+
+            DB::beginTransaction();
+
+            foreach ($grouped as $kode => $penjualan) {
+                // Skip jika sudah ada
+                $existing = PenjualanModel::where('penjualan_kode', $kode)->first();
+                if ($existing) continue;
+
+                $header = PenjualanModel::create([
+                    'user_id'           => $penjualan['header']['user_id'],
+                    'pembeli'           => $penjualan['header']['pembeli'],
+                    'penjualan_kode'    => $penjualan['header']['penjualan_kode'],
+                    'penjualan_tanggal' => $penjualan['header']['penjualan_tanggal'],
+                ]);
+
+                foreach ($penjualan['details'] as $detail) {
+                    PenjualanDetailModel::create([
+                        'penjualan_id' => $header->penjualan_id,
+                        'barang_id'    => $detail['barang_id'],
+                        'harga'        => $detail['harga'],
+                        'jumlah'       => $detail['jumlah'],
+                    ]);
+
+                    // Update stok
+                    StokModel::where('barang_id', $detail['barang_id'])
+                        ->decrement('stok_jumlah', $detail['jumlah']);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data penjualan dan detail berhasil diimport'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal import: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    return redirect('/');
+}
+
 }
 
 

@@ -415,6 +415,8 @@ class BarangController extends Controller
         return $pdf->stream('Data Barang '.date('Y-m-d H-i-s').'.pdf');
     }
 
+    
+
 }
 
 
