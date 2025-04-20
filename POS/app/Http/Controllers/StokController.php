@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class StokController extends Controller
@@ -383,6 +384,61 @@ public function import_ajax(Request $request)
     }
 
     return redirect('/');
+}
+
+
+
+public function export_excel()
+{
+    $stok = StokModel::with(['barang', 'user', 'supplier'])->get();
+
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Tanggal');
+    $sheet->setCellValue('C1', 'Nama Barang');
+    $sheet->setCellValue('D1', 'Jumlah');
+    $sheet->setCellValue('E1', 'User');
+    $sheet->setCellValue('F1', 'Supplier');
+
+    $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+    $no = 1;
+    $baris = 2;
+    foreach ($stok as $item) {
+        $sheet->setCellValue('A' . $baris, $no++);
+        $sheet->setCellValue('B' . $baris, $item->stok_tanggal);
+        $sheet->setCellValue('C' . $baris, $item->barang->barang_nama ?? '-');
+        $sheet->setCellValue('D' . $baris, $item->stok_jumlah);
+        $sheet->setCellValue('E' . $baris, $item->user->nama ?? '-');
+        $sheet->setCellValue('F' . $baris, $item->supplier->supplier_nama ?? '-');
+        $baris++;
+    }
+
+    foreach (range('A', 'F') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $sheet->setTitle('Data Stok');
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $filename = 'Data_Stok_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    $writer->save('php://output');
+    exit;
+}
+
+public function export_pdf()
+{
+    $stok = StokModel::with(['barang', 'user', 'supplier'])->get();
+    $pdf = Pdf::loadView('stok.export_pdf', compact('stok'));
+    $pdf->setPaper('A4', 'landscape');
+    $pdf->setOption("isRemoteEnabled", true);
+    return $pdf->stream('Data_Stok_' . date('Y-m-d_H-i-s') . '.pdf');
 }
     // public function index(){
         //============Jobsheet 3 Praktikum 4============

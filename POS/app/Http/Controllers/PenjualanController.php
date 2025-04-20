@@ -12,6 +12,7 @@ use App\Models\StokModel;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PenjualanController extends Controller
 {
@@ -369,101 +370,171 @@ class PenjualanController extends Controller
     }
 
     public function import_ajax(Request $request)
-{
-    if ($request->ajax() || $request->wantsJson()) {
-        $rules = [
-            'file_penjualan' => ['required', 'mimes:xlsx', 'max:1024']
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi Gagal',
-                'msgField' => $validator->errors()
-            ]);
-        }
-
-        try {
-            $file = $request->file('file_penjualan');
-            $reader = IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($file->getRealPath());
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray(null, false, true, true);
-
-            $grouped = [];
-
-            foreach ($data as $i => $row) {
-                if ($i <= 1) continue; // Skip header
-
-                $kode = $row['C'];
-
-                // Group baris berdasarkan penjualan_kode
-                if (!isset($grouped[$kode])) {
-                    $grouped[$kode] = [
-                        'header' => [
-                            'user_id' => $row['A'],
-                            'pembeli' => $row['B'],
-                            'penjualan_kode' => $row['C'],
-                            'penjualan_tanggal' => $row['D'],
-                        ],
-                        'details' => []
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_penjualan' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+    
+            try {
+                $file = $request->file('file_penjualan');
+                $reader = IOFactory::createReader('Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray(null, false, true, true);
+    
+                $grouped = [];
+    
+                foreach ($data as $i => $row) {
+                    if ($i <= 1) continue; // Skip header
+    
+                    $kode = $row['C'];
+    
+                    if (!isset($grouped[$kode])) {
+                        $grouped[$kode] = [
+                            'header' => [
+                                'user_id' => $row['A'],
+                                'pembeli' => $row['B'],
+                                'penjualan_kode' => $row['C'],
+                                'penjualan_tanggal' => $row['D'],
+                            ],
+                            'details' => []
+                        ];
+                    }
+    
+                    $grouped[$kode]['details'][] = [
+                        'barang_id' => $row['E'],
+                        'jumlah'    => $row['F'], // harga tidak diambil dari Excel
                     ];
                 }
-
-                $grouped[$kode]['details'][] = [
-                    'barang_id' => $row['E'],
-                    'harga'     => $row['F'],
-                    'jumlah'    => $row['G'],
-                ];
-            }
-
-            DB::beginTransaction();
-
-            foreach ($grouped as $kode => $penjualan) {
-                // Skip jika sudah ada
-                $existing = PenjualanModel::where('penjualan_kode', $kode)->first();
-                if ($existing) continue;
-
-                $header = PenjualanModel::create([
-                    'user_id'           => $penjualan['header']['user_id'],
-                    'pembeli'           => $penjualan['header']['pembeli'],
-                    'penjualan_kode'    => $penjualan['header']['penjualan_kode'],
-                    'penjualan_tanggal' => $penjualan['header']['penjualan_tanggal'],
-                ]);
-
-                foreach ($penjualan['details'] as $detail) {
-                    PenjualanDetailModel::create([
-                        'penjualan_id' => $header->penjualan_id,
-                        'barang_id'    => $detail['barang_id'],
-                        'harga'        => $detail['harga'],
-                        'jumlah'       => $detail['jumlah'],
+    
+                DB::beginTransaction();
+    
+                foreach ($grouped as $kode => $penjualan) {
+                    // Skip jika sudah ada
+                    $existing = PenjualanModel::where('penjualan_kode', $kode)->first();
+                    if ($existing) continue;
+    
+                    $header = PenjualanModel::create([
+                        'user_id'           => $penjualan['header']['user_id'],
+                        'pembeli'           => $penjualan['header']['pembeli'],
+                        'penjualan_kode'    => $penjualan['header']['penjualan_kode'],
+                        'penjualan_tanggal' => $penjualan['header']['penjualan_tanggal'],
                     ]);
-
-                    // Update stok
-                    StokModel::where('barang_id', $detail['barang_id'])
-                        ->decrement('stok_jumlah', $detail['jumlah']);
+    
+                    foreach ($penjualan['details'] as $detail) {
+                        // Ambil harga_jual dari m_barang
+                        $barang = BarangModel::where('barang_id', $detail['barang_id'])->first();
+    
+                        if (!$barang) {
+                            throw new \Exception("Barang dengan ID {$detail['barang_id']} tidak ditemukan.");
+                        }
+    
+                        $harga_satuan = $barang->harga_jual;
+                        $subtotal = $harga_satuan * $detail['jumlah'];
+    
+                        PenjualanDetailModel::create([
+                            'penjualan_id' => $header->penjualan_id,
+                            'barang_id'    => $detail['barang_id'],
+                            'harga'        => $subtotal,
+                            'jumlah'       => $detail['jumlah'],
+                        ]);
+    
+                        // Update stok
+                        StokModel::where('barang_id', $detail['barang_id'])
+                            ->decrement('stok_jumlah', $detail['jumlah']);
+                    }
                 }
+    
+                DB::commit();
+    
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data penjualan dan detail berhasil diimport'
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal import: ' . $e->getMessage()
+                ]);
             }
+        }
+    
+        return redirect('/');
+    }
+    
 
-            DB::commit();
+public function export_excel()
+{
+    $penjualan = PenjualanModel::with(['user', 'penjualanDetail.barang'])->get();
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Data penjualan dan detail berhasil diimport'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Gagal import: ' . $e->getMessage()
-            ]);
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Kode Penjualan');
+    $sheet->setCellValue('C1', 'Tanggal');
+    $sheet->setCellValue('D1', 'Pembeli');
+    $sheet->setCellValue('E1', 'Petugas');
+    $sheet->setCellValue('F1', 'Barang');
+    $sheet->setCellValue('G1', 'Jumlah');
+    $sheet->setCellValue('H1', 'Harga');
+    $sheet->setCellValue('I1', 'Subtotal');
+
+    $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+
+    $row = 2;
+    $no = 1;
+    foreach ($penjualan as $p) {
+        foreach ($p->penjualanDetail as $d) {
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $p->penjualan_kode);
+            $sheet->setCellValue('C' . $row, $p->penjualan_tanggal);
+            $sheet->setCellValue('D' . $row, $p->pembeli);
+            $sheet->setCellValue('E' . $row, $p->user->username ?? '-');
+            $sheet->setCellValue('F' . $row, $d->barang->barang_nama ?? '-');
+            $sheet->setCellValue('G' . $row, $d->jumlah);
+            $sheet->setCellValue('H' . $row, $d->harga);
+            $sheet->setCellValue('I' . $row, $d->jumlah * $d->harga);
+            $row++;
         }
     }
 
-    return redirect('/');
+    foreach (range('A', 'I') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $filename = 'Data_Penjualan_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    $writer->save('php://output');
+    exit;
 }
+
+public function export_pdf()
+{
+    $penjualan = PenjualanModel::with(['user', 'penjualanDetail.barang'])->get();
+
+    $pdf = PDF::loadView('penjualan.export_pdf', compact('penjualan'));
+    $pdf->setPaper('A4', 'landscape');
+    return $pdf->stream('Laporan_Penjualan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+}
+
+
+
 
 }
 

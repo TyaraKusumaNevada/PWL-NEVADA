@@ -3,12 +3,13 @@
   <div class="card card-outline card-primary">
     <div class="card-header">
       <h3 class="card-title">Manajemen Stok</h3>
-      <div class="card-tools d-flex gap-2">
-        {{-- Tombol Tambah Stok --}}
-        <button onclick="modalAction('{{ url('/stok/import') }}')" class="btn btn-sm btn-info">Import Stok</button> 
-        <a class="btn btn-primary" href="{{ url('stok/create') }}">Tambah Stok</a>
-        <button onclick="modalAction('{{ url('/stok/create_ajax') }}')" class="btn btn-success">Tambah Ajax</button>
-      </div>
+      <div class="card-tools d-flex flex-wrap gap-2">
+    <button onclick="modalAction('{{ url('/stok/import') }}')" class="btn btn-sm btn-info"><i class="fa fa-upload mr-2"></i> Import Stok</button>
+    <a href="{{ url('/stok/export_excel') }}" class="btn btn-sm btn-primary"><i class="fa fa-file-excel mr-2"></i> Export Excel</a>
+    <a href="{{ url('/stok/export_pdf') }}" class="btn btn-sm btn-warning "><i class="fa fa-file-pdf mr-2"></i> Export PDF</a>
+    <button onclick="modalAction('{{ url('/stok/create_ajax') }}')" class="btn btn-sm btn-success"><i class="fa fa-plus mr-2"></i> Tambah Stok</button>
+</div>
+
     </div>
 
     <div class="card-body">
