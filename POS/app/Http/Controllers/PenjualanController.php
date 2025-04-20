@@ -137,8 +137,8 @@ class PenjualanController extends Controller
         ->addIndexColumn()
         ->addColumn('aksi', function ($penjualan) {
         $btn = '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-        $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-        $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+        $btn .= '<a href="' . url('/penjualan/' . $penjualan->penjualan_id . '/export_struk') . '" target="_blank" class="btn btn-warning btn-sm">Cetak Struk</a> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/penjualan/' . $penjualan->penjualan_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
         return $btn;
         })
         ->rawColumns(['aksi'])
@@ -533,9 +533,14 @@ public function export_pdf()
     return $pdf->stream('Laporan_Penjualan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
 }
 
+public function export_struk($id)
+{
+    $penjualan = PenjualanModel::with(['user', 'penjualanDetail.barang'])->findOrFail($id);
 
-
-
+    $pdf = PDF::loadView('penjualan.struk', compact('penjualan'));
+    $pdf->setPaper('A5', 'potrait');
+    return $pdf->stream('Struk_Penjualan_' . $penjualan->penjualan_kode . '.pdf');
+}
 }
 
 

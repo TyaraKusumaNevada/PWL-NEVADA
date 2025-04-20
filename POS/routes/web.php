@@ -269,6 +269,11 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::post('/import_ajax', [PenjualanController::class, 'import_ajax']); // ajax import excel
             Route::get('/export_excel', [PenjualanController::class, 'export_excel']); 
             Route::get('/export_pdf', [PenjualanController::class, 'export_pdf']);
+            Route::get('/{id}/export_struk', [PenjualanController::class, 'export_struk'])->name('penjualan.export_struk');
+
+
+            
+
         });
     });
 
