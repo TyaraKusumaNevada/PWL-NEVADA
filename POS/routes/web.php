@@ -177,6 +177,8 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [StokController::class, 'destroy']); // menghapus data stok
             Route::get('/import', [StokController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [StokController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [StokController::class, 'export_excel']);
+            Route::get('/export_pdf', [StokController::class, 'export_pdf']);
         });
     });
 
@@ -265,8 +267,14 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::delete('/{id}', [PenjualanController::class, 'destroy']); // Hapus data
             Route::get('/import', [PenjualanController::class, 'import']); // ajax form upload excel
             Route::post('/import_ajax', [PenjualanController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [PenjualanController::class, 'export_excel']); 
+            Route::get('/export_pdf', [PenjualanController::class, 'export_pdf']);
         });
     });
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('profile_ajax', [ProfileController::class, 'editProfileAjax']);
+    Route::post('profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 });
     

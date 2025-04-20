@@ -551,6 +551,35 @@ public function delete_ajax(Request $request, $id){
         return $pdf->stream('Data User '.date('Y-m-d H-i-s').'.pdf');
     }
 
+
+    public function updateFoto(Request $request)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $user = Auth::user();
+
+        // Hapus foto lama jika ada
+        if ($user->foto && Storage::exists('public/foto/' . $user->foto)) {
+            Storage::delete('public/foto/' . $user->foto);
+        }
+
+        // Simpan foto baru
+        $file = $request->file('foto');
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->storeAs('public/foto', $filename);
+
+        // Simpan ke database
+        $user->foto = $filename;
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Foto profil berhasil diperbarui.',
+            'foto_url' => asset('storage/foto/' . $filename)
+        ]);
+    }
 }    
 
         // =======Jobsheet 3 Praktikum 4====================
