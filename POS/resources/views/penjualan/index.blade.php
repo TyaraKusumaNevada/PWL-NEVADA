@@ -20,18 +20,7 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="filter_user_id">Filter Petugas:</label>
-                    <select class="form-control" id="filter_user_id" name="filter_user_id">
-                        <option value="">- Semua -</option>
-                       @foreach($user as $user)
-                            <option value="{{ $user->user_id }}">{{ $user->username }}</option>
-                        @endforeach
-                    </select>
-                    <small class="form-text text-muted">Berdasarkan Kasir penjualan</small>
-                </div>
-            </div>
+           
 
             <table class="table table-bordered table-striped table-hover table-sm" id="table_penjualan">
                 <thead>
@@ -84,9 +73,10 @@
             order: [[2, 'desc']]
         });
 
-        $('#filter_user_id').on('change', function(){
+        $('#user_id').on('change', function(){
             dataPenjualan.ajax.reload();
         });
+         
     });
 </script>
 @endpush
