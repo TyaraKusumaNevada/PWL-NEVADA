@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-
+    RewriteBase /PWL-NEVADA/Minggu-11/PWL_POS/public/
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
